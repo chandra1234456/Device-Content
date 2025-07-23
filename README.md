@@ -39,8 +39,8 @@ fun getAndroidId(context: Context): String {
     return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: "UNKNOWN_ANDROID_ID"
 }
 ```
-## Download
 
-You can download the app from the Google Play Store here:
+## ✈️ Download
 
-[Get Device Information App on Google Play Store](https://play.google.com/store/apps/details?id=com.example.myapp)
+- 📲 [Get it on Google Play](https://play.google.com/store/apps/details?id=com.chandra.practice.deviceinfo)
+- 🛠️ [Get it on GitHub](https://github.com/chandra1234456)
