@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.chandra.practice.deviceinfo"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "com.chandra.practice.deviceinfo"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 35 // align with compileSdk
         versionCode = 2
         versionName = "1.0.1"
@@ -64,10 +64,11 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.7")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
 }
