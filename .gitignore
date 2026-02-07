@@ -20,6 +20,8 @@ local.properties
 *.apk
 *.ap_
 *.aab
+/app/release
+.idea
 
 # Gradle
 .gradle/
