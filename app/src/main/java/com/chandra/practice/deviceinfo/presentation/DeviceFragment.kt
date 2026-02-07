@@ -163,7 +163,7 @@ class DeviceFragment : Fragment() {
         inflater.inflate(R.menu.menu_device_info, menu)
 
         // Setup search view
-        val searchItem = menu.findItem(R.id.action_search)
+        val searchItem = menu.findItem(R.id.action_share)
         val searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -232,11 +232,6 @@ class DeviceFragment : Fragment() {
                 }
                 R.id.action_share -> {
                     shareData()
-                    true
-                }
-                R.id.action_settings -> {
-                    // Open settings or show dialog
-                    showSettingsDialog()
                     true
                 }
                 else -> false

@@ -2,6 +2,12 @@
 
 This Android app retrieves and displays various device information such as Android ID, device model, manufacturer, OS version, and more. It also supports showing charts based on collected device data.
 
+
+## Available at
+
+<a href='https://play.google.com/store/apps/details?id=com.chandra.practice.deviceinfo'>
+<img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80"/></a>
+
 ## Features
 
 - Fetches device unique ID (`ANDROID_ID`)
@@ -15,7 +21,7 @@ This Android app retrieves and displays various device information such as Andro
 ### Prerequisites
 
 - Android Studio 4.0+
-- Android SDK 21+
+- Android SDK 27+
 - A physical or virtual Android device for testing
 
 ### Building the App
