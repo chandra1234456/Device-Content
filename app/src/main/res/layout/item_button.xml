@@ -5,7 +5,10 @@
     android:layout_width="wrap_content"
     android:layout_height="40dp"
     android:layout_margin="8dp"
-    android:textColor="@android:color/white"
-    app:cornerRadius="8dp"
+    android:background="@drawable/bg_category_selector"
     android:minWidth="80dp"
-    android:text="Sample" />
+    android:text="Sample"
+    android:textColor="@drawable/category_text_color"
+    app:backgroundTint="@null"
+    app:cornerRadius="8dp" />
+

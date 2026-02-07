@@ -11,7 +11,7 @@ class HorizontalButtonAdapter(
     private val items: List<String>,
     private val onClick: (String) -> Unit
     ) : RecyclerView.Adapter<HorizontalButtonAdapter.ButtonViewHolder>() {
-
+    private var selectedPosition = RecyclerView.NO_POSITION
     inner class ButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val button: MaterialButton = itemView.findViewById(R.id.categoryButton)
     }
@@ -25,7 +25,12 @@ class HorizontalButtonAdapter(
     override fun onBindViewHolder(holder: ButtonViewHolder, position: Int) {
         val item = items[position]
         holder.button.text = item
+        holder.button.isSelected = position == selectedPosition
         holder.button.setOnClickListener {
+            val previousPosition = selectedPosition
+            selectedPosition = holder.adapterPosition
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(selectedPosition)
             onClick(item)
         }
     }

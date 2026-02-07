@@ -20,7 +20,7 @@ This Android app retrieves and displays various device information such as Andro
 
 ### Prerequisites
 
-- Android Studio 4.0+
+- Android Studio 8.1 and above.
 - Android SDK 27+
 - A physical or virtual Android device for testing
 
