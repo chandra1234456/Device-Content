@@ -35,7 +35,6 @@ gradle.properties.local
 # Android Studio
 ####################################
 .idea/
-.idea
 *.iws
 *.ipr
 out/

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Monetization Strategy</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #222;
+            padding: 16px;
+            background: #ffffff;
+        }
+        h1, h2, h3 {
+            color: #111;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            background: #fafafa;
+        }
+        .note {
+            background: #eef4ff;
+            border-left: 4px solid #3f51b5;
+            padding: 12px;
+            margin: 16px 0;
+        }
+        .warning {
+            background: #fff4e5;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin: 16px 0;
+        }
+        .ad-mock {
+            border: 1px dashed #bbb;
+            padding: 12px;
+            border-radius: 10px;
+            background: #ffffff;
+            max-width: 320px;
+        }
+        .sponsored {
+            font-size: 12px;
+            color: #777;
+        }
+        .cta {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: #3f51b5;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Play Store–Safe Monetization Review</h1>
+<p>
+    This monetization strategy is tailored specifically for a <strong>single-screen,
+    informational, utility-based Android app</strong>.
+</p>
+
+<h2>🔑 Golden Rules</h2>
+<ul>
+    <li>Informational</li>
+    <li>Single screen</li>
+    <li>Scroll-heavy</li>
+    <li>Utility-based</li>
+</ul>
+
+<div class="note">
+    <strong>Important:</strong> Ads must be <strong>NON-INTRUSIVE</strong>.
+    If users feel interrupted, uninstall rates increase rapidly.
+</div>
+
+---
+
+<h2>✅ Best Ad Types for This Screen (Ranked)</h2>
+
+<h3>🥇 1. Native Ads (Best Choice ⭐⭐⭐⭐⭐)</h3>
+
+<p><strong>Why this works perfectly:</strong></p>
+<ul>
+    <li>Blends naturally into the RecyclerView</li>
+    <li>Feels like part of the content</li>
+    <li>Low Play Store rejection risk</li>
+</ul>
+
+<p><strong>📍 Placement:</strong></p>
+<p>Inside <code>deviceInfoRecyclerView</code>, between content items.</p>
+
+<p><strong>Example placement:</strong></p>
+<pre>
+Battery Info
+CPU Info
+────────────
+[ Native Ad Card ]
+────────────
+Memory Info
+Storage Info
+</pre>
+
+<p><strong>🖼️ Visual representation:</strong></p>
+<div class="ad-mock">
+    <div class="sponsored">Sponsored</div>
+    <strong>🔋 Device Cleaner Pro</strong>
+    <p>Speed up your phone</p>
+    <a class="cta" href="#">Install</a>
+</div>
+
+<p><strong>UX Tips:</strong></p>
+<ul>
+    <li>Show 1 ad per 8–10 items</li>
+    <li>Clearly label ads as “Sponsored”</li>
+    <li>Use the same card radius as info rows</li>
+</ul>
+
+<div class="note">
+    ✅ This is the <strong>#1 recommended ad format</strong>.
+</div>
+
+---
+
+<h3>🥈 2. Anchored Adaptive Banner (Safe & Simple)</h3>
+
+<p><strong>📍 Placement:</strong></p>
+<p>Bottom of the screen, <strong>above the FAB</strong> (never overlapping).</p>
+
+<pre>
+[ RecyclerView content ]
+------------------------
+[ Adaptive Banner Ad ]
+</pre>
+
+<p><strong>Why it works:</strong></p>
+<ul>
+    <li>Predictable placement</li>
+    <li>Does not interrupt scrolling</li>
+    <li>Easy to implement</li>
+</ul>
+
+<div class="warning">
+    <strong>Be careful:</strong>
+    <ul>
+        <li>Do not show during SwipeRefresh</li>
+        <li>Hide on scroll down if possible</li>
+    </ul>
+</div>
+
+---
+
+<h3>🥉 3. Rewarded Ads (Optional but Smart 💰)</h3>
+
+<p><strong>Best use case:</strong></p>
+<p>Tie rewarded ads to premium actions like export or PDF generation.</p>
+
+<pre>
+Export as PDF
+[ Watch ad to unlock ]
+</pre>
+
+<p><strong>Why users accept this:</strong></p>
+<ul>
+    <li>Clear value exchange</li>
+    <li>Completely optional</li>
+    <li>Not forced</li>
+</ul>
+
+---
+
+<h2>✅ Final Recommendation</h2>
+<p>
+    For a clean, professional, and Play Store–safe experience:
+</p>
+<ul>
+    <li>Use <strong>Native Ads</strong> inside content</li>
+    <li>Add <strong>Rewarded Ads</strong> for optional premium actions</li>
+    <li>Avoid intrusive or full-screen ads</li>
+</ul>
+
+</body>
+</html>
