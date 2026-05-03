@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Device Content</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="privacy_underlined"><u>Privacy Policy</u></string>
     <string name="terms_underlined"><u>Terms &amp; Services</u></string>
+    <string name="terms_and_conditions"><u>Terms &amp; Conditions</u></string>
+    <string name="agree_continue">Agree &amp; Continue</string>
+    <string name="legal_transparency">Legal &amp; Transparency</string>
 
 </resources>

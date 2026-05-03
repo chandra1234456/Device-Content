@@ -13,6 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.idea/vcs.xml
+/.idea/runConfigurations.xml
+/.idea/AndroidProjectSystem.xml
 
 ####################################
 # Android / Gradle

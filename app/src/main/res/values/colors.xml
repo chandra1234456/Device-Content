@@ -28,4 +28,8 @@
 
     <!-- Background -->
     <color name="colorBackground">#FEF7FF</color>
+    <color name="main_text_color">#00478D</color>
+
+
+
 </resources>

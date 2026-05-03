@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="192dp"
+    android:height="192dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192">
+  <group>
+    <clip-path
+        android:pathData="M96,0L96,0A96,96 0,0 1,192 96L192,96A96,96 0,0 1,96 192L96,192A96,96 0,0 1,0 96L0,96A96,96 0,0 1,96 0z"/>
+    <path
+        android:pathData="M96,0L96,0A96,96 0,0 1,192 96L192,96A96,96 0,0 1,96 192L96,192A96,96 0,0 1,0 96L0,96A96,96 0,0 1,96 0z"
+        android:fillColor="#C9E3FA"/>
+    <path
+        android:pathData="M92.5,107.83L111.33,89L106.58,84.25L92.5,98.33L85.5,91.33L80.75,96.08L92.5,107.83V107.83M96,129.33C88.28,127.39 81.9,122.96 76.88,116.04C71.85,109.13 69.33,101.44 69.33,93V72.67L96,62.67L122.67,72.67V93C122.67,101.44 120.15,109.13 115.13,116.04C110.1,122.96 103.72,127.39 96,129.33V129.33M96,122.33C101.78,120.5 106.56,116.83 110.33,111.33C114.11,105.83 116,99.72 116,93V77.25L96,69.75L76,77.25V93C76,99.72 77.89,105.83 81.67,111.33C85.44,116.83 90.22,120.5 96,122.33V122.33M96,96V96V96V96V96V96V96V96V96V96"
+        android:fillColor="#00478D"/>
+    <path
+        android:pathData="M0,0h192v192h-192z"
+        android:strokeAlpha="0.1"
+        android:fillAlpha="0.1">
+      <aapt:attr name="android:fillColor">
+        <gradient
+            android:startX="0"
+            android:startY="0"
+            android:endX="192"
+            android:endY="192"
+            android:type="linear">
+          <item android:offset="0" android:color="#FF00478D"/>
+          <item android:offset="1" android:color="#0000478D"/>
+        </gradient>
+      </aapt:attr>
+    </path>
+  </group>
+</vector>

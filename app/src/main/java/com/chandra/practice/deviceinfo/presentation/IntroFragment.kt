@@ -28,17 +28,23 @@ class IntroFragment : Fragment() {
         introBinding.btnExit.setOnClickListener {
             requireActivity().finish()
         }
-        introBinding.txtTerms.setOnClickListener {
-            val bundle = bundleOf("url" to "https://sites.google.com/view/devicecontent/home","toolbar" to "Terms")
+        introBinding.termsAndConditionsText.setOnClickListener {
+            val bundle = bundleOf(
+                "url" to "https://sites.google.com/view/devicecontent/home",
+                "toolbar" to "Terms"
+            )
             findNavController().navigate(R.id.webViewFragment, bundle)
         }
-        introBinding.txtPrivacyPolicy.setOnClickListener {
-            val bundle = bundleOf("url" to "https://sites.google.com/view/device-content/home","toolbar" to "Privacy")
+        introBinding.privacyPolicyText.setOnClickListener {
+            val bundle = bundleOf(
+                "url" to "https://sites.google.com/view/device-content/home",
+                "toolbar" to "Privacy"
+            )
             findNavController().navigate(R.id.webViewFragment, bundle)
+        }
+        introBinding.btnAgree.setOnClickListener {
+            findNavController().navigate(R.id.splashFragment)
         }
     }
 }
 
-private fun Any.beginTransaction() {
-    TODO("Not yet implemented")
-}
