@@ -3,45 +3,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:strokeColor="#C2C6D4"
-    app:strokeWidth="2dp">
+    android:layout_height="160dp"
+    android:layout_margin="10dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#E6EAF2"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:padding="16dp">
 
-        <!-- Icon -->
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon"
-            android:layout_width="52dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_network"
-            app:layout_constraintTop_toTopOf="parent"
+        <!-- Top Icon Background -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/iconContainer"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            app:cardBackgroundColor="#C9E3FA"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="#C9E3FA">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_network" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="#1B1B1F"
-            android:textSize="14sp"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:maxLines="1"
+            android:layout_marginTop="-5dp"
             android:ellipsize="end"
-            tools:text="Very long title text that \n  wraps properly in grid layout"
-            app:layout_constraintTop_toBottomOf="@id/icon"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="2"
+            android:textAlignment="center"
+            android:textColor="#111827"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/iconContainer"
+            tools:text="Very Long Title That Wraps Beautifully" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
