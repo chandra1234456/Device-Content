@@ -8,4 +8,20 @@
     <string name="agree_continue">Agree &amp; Continue</string>
     <string name="legal_transparency">Legal &amp; Transparency</string>
 
+    <!-- Battery info strings -->
+    <string name="battery_status_title">Battery Status</string>
+    <string name="percent_zero">0%</string>
+    <string name="not_charging">Not Charging</string>
+    <string name="estimated_time_default">Estimated time: —</string>
+    <string name="temperature_label">Temperature</string>
+    <string name="temperature_default">--°C</string>
+    <string name="voltage_label">Voltage</string>
+    <string name="voltage_default">-- V</string>
+    <string name="detailed_specifications">Detailed Specifications</string>
+    <string name="export_battery_log">Export Battery Log</string>
+    <string name="recalibrate">Recalibrate</string>
+    <string name="desc_temperature_icon">Temperature icon</string>
+    <string name="desc_voltage_icon">Voltage icon</string>
+    <string name="battery_level">Battery level</string>
+
 </resources>

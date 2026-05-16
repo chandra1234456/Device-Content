@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="battery_frame_size">200dp</dimen>
+    <dimen name="battery_indicator_size">160dp</dimen>
+    <dimen name="battery_track_thickness">14dp</dimen>
+    <dimen name="card_padding_large">24dp</dimen>
+</resources>

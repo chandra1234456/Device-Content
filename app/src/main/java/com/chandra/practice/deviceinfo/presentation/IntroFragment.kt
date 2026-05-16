@@ -31,14 +31,14 @@ class IntroFragment : Fragment() {
         introBinding.termsAndConditionsText.setOnClickListener {
             val bundle = bundleOf(
                 "url" to "https://sites.google.com/view/devicecontent/home",
-                "toolbar" to "Terms"
+                "toolbar" to "Terms & Conditions"
             )
             findNavController().navigate(R.id.webViewFragment, bundle)
         }
         introBinding.privacyPolicyText.setOnClickListener {
             val bundle = bundleOf(
                 "url" to "https://sites.google.com/view/device-content/home",
-                "toolbar" to "Privacy"
+                "toolbar" to "Privacy Policy"
             )
             findNavController().navigate(R.id.webViewFragment, bundle)
         }

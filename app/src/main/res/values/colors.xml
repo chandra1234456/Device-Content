@@ -31,5 +31,16 @@
     <color name="main_text_color">#00478D</color>
 
 
+    <color name="battery_green">#4CAF50</color>
+    <color name="battery_blue">#2196F3</color>
+    <color name="battery_orange">#FF9800</color>
+    <color name="battery_red">#F44336</color>
 
+    <!-- Additional UI colors -->
+    <color name="bg_light">#F2F3F7</color>
+    <color name="battery_indicator">#2E6BFF</color>
+    <color name="battery_track">#E6EAF2</color>
+    <color name="text_primary">#111111</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_tertiary">#777777</color>
 </resources>

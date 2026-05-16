@@ -43,7 +43,8 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvVersion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Version 2.4.1 (Stable)"
@@ -95,14 +96,20 @@
             android:padding="12dp">
 
             <!-- Rate App -->
-            <include layout="@layout/item_row" />
+            <include
+                android:id="@+id/engagement_rate_app"
+                layout="@layout/item_row"
+                />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="#C2C6D4" />
 
-            <include layout="@layout/item_row" />
+            <include
+                android:id="@+id/engagement_rate_app2"
+                layout="@layout/item_row"
+                />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -136,14 +143,19 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <include layout="@layout/item_row" />
+            <include
+                android:id="@+id/engagement_legal"
+                layout="@layout/item_row" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="#C2C6D4" />
 
-            <include layout="@layout/item_row" />
+            <include
+
+                android:id="@+id/engagement_legal2"
+                layout="@layout/item_row" />
 
 
         </LinearLayout>
