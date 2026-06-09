@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chandra.practice.deviceinfo.R
 import com.chandra.practice.deviceinfo.databinding.FragmentBatteryInfoBinding
@@ -68,6 +69,10 @@ class BatteryInfoFragment : Fragment() {
     }
 
     private fun setupButtons() {
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.btnExport.setOnClickListener {
             exportBatteryLog()
         }
@@ -172,21 +177,32 @@ class BatteryInfoFragment : Fragment() {
         if (temperature > 0) {
             binding.tvTemp.text = String.Companion.format(Locale.US, "%.1f°C", temperature)
 
-            // Temperature warning
-            when {
+            // Temperature warning color filters
+            val (tempColor, iconColor) = when {
                 temperature > 45 -> {
-                    binding.tvTemp.setTextColor(ContextCompat.getColor(requireContext(), R.color.battery_red))
                     if (isResumed) {
                         Toast.makeText(requireContext(), "⚠️ Battery temperature is high!", Toast.LENGTH_SHORT).show()
                     }
+                    Pair(
+                        ContextCompat.getColor(requireContext(), R.color.battery_red),
+                        ContextCompat.getColor(requireContext(), R.color.battery_red)
+                    )
                 }
                 temperature > 35 -> {
-                    binding.tvTemp.setTextColor(ContextCompat.getColor(requireContext(), R.color.battery_orange))
+                    Pair(
+                        ContextCompat.getColor(requireContext(), R.color.battery_orange),
+                        ContextCompat.getColor(requireContext(), R.color.battery_orange)
+                    )
                 }
                 else -> {
-                    binding.tvTemp.setTextColor(ContextCompat.getColor(requireContext(), R.color.battery_green))
+                    Pair(
+                        ContextCompat.getColor(requireContext(), R.color.battery_green),
+                        ContextCompat.getColor(requireContext(), R.color.battery_green)
+                    )
                 }
             }
+            binding.tvTemp.setTextColor(tempColor)
+            binding.ivTempIcon.setColorFilter(iconColor)
         } else {
             binding.tvTemp.text = "N/A"
         }

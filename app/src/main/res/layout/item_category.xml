@@ -3,63 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:layout_margin="10dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="22dp"
-    app:cardElevation="4dp"
-    app:strokeColor="#E6EAF2"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp">
 
-        <!-- Top Icon Background -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Top Icon Background Container -->
+        <FrameLayout
             android:id="@+id/iconContainer"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            app:cardBackgroundColor="#C9E3FA"
-            app:cardCornerRadius="20dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="#C9E3FA">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_network" />
+                tools:src="@drawable/ic_network"
+                tools:tint="?attr/colorPrimary" />
 
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
+            android:layout_marginTop="12dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
             android:maxLines="2"
             android:textAlignment="center"
-            android:textColor="#111827"
-            android:textSize="15sp"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iconContainer"
-            tools:text="Very Long Title That Wraps Beautifully" />
+            tools:text="Category Name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

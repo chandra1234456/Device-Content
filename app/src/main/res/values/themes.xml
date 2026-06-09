@@ -32,4 +32,8 @@
         <item name="strokeColor">?attr/colorOutline</item>
         <item name="strokeWidth">1dp</item>
     </style>
+    <!--<style name="ShapeAppearanceOverlay.FullRound">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>-->
 </resources>

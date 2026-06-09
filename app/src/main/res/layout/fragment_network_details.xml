@@ -4,22 +4,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:fillViewport="true"
+    android:background="?attr/colorSurface"
     tools:context=".features.network.NetworkDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="20dp">
+
+        <!-- Header Row -->
+        <RelativeLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Back Button -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:background="?attr/colorSurfaceContainerHigh"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="?attr/colorOnSurfaceVariant"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/ivBack"
+                android:text="Network Details"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <!-- Top Status Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardStatus"
             android:layout_width="match_parent"
             android:layout_height="140dp"
-            app:cardBackgroundColor="#0061C1"
-            app:cardCornerRadius="16dp"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="?attr/colorPrimary"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -31,8 +76,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Current Status"
-                    android:textColor="#C8DAFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="14sp"
+                    android:alpha="0.8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Connected"
-                    android:textColor="#C8DAFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="28sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -52,40 +98,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Home_WiFi_5G"
-                    android:textColor="#C8DAFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
+                    android:alpha="0.8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvStatusValue" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:cardBackgroundColor="#33FFFFFF"
+                    app:cardBackgroundColor="#26FFFFFF"
                     app:cardCornerRadius="50dp"
                     app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_gravity="center"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_network_wifi" />
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_network_wifi"
+                        app:tint="?attr/colorOnPrimary" />
                 </com.google.android.material.card.MaterialCardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Signal Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardSignal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            app:cardBackgroundColor="#F5F6FA"
-            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp"
             app:layout_constraintEnd_toStartOf="@id/cardFrequency"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardStatus">
@@ -106,7 +158,8 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_signal" />
+                        android:src="@drawable/ic_signal"
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
@@ -115,7 +168,7 @@
                         android:layout_weight="1"
                         android:text="Excellent"
                         android:textAlignment="textEnd"
-                        android:textColor="#496175"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -126,8 +179,9 @@
                     android:layout_marginTop="12dp"
                     android:text="SIGNAL STRENGTH"
                     android:textAllCaps="true"
-                    android:textColor="#424752"
-                    android:textSize="11sp" />
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tvSignalDbm"
@@ -135,21 +189,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="-65 dBm"
-                    android:textColor="#1B1B1F"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Frequency Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardFrequency"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:cardBackgroundColor="#F5F6FA"
-            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp"
             app:layout_constraintBottom_toBottomOf="@id/cardSignal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cardSignal"
@@ -171,7 +228,8 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_broad_band" />
+                        android:src="@drawable/ic_broad_band"
+                        app:tint="?attr/colorSecondary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
@@ -180,7 +238,7 @@
                         android:layout_weight="1"
                         android:text="Broadband"
                         android:textAlignment="textEnd"
-                        android:textColor="#496175"
+                        android:textColor="?attr/colorSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -191,8 +249,9 @@
                     android:layout_marginTop="12dp"
                     android:text="FREQUENCY"
                     android:textAllCaps="true"
-                    android:textColor="#424752"
-                    android:textSize="11sp" />
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tvFrequencyValue"
@@ -200,64 +259,73 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="5 GHz"
-                    android:textColor="#1B1B1F"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <!-- Network Details List Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="12dp"
-            app:layout_constraintTop_toBottomOf="@id/cardSignal">
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/cardSignal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="16dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:text="Network Details"
-                    android:textColor="#333333"
+                    android:padding="4dp"
+                    android:text="Connection &amp; IP Settings"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE" />
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="?attr/colorOutlineVariant" />
 
-                <!-- Row: IP Address (Repeat this structure for others) -->
+                <!-- Row: Connection Type -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="4dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_connection_type"
-                        app:tint="#555555" />
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="14dp"
                         android:text="Connection Type"
-                        android:textColor="#333333"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="14sp" />
 
-                    <!-- pushes value to the right -->
                     <View
                         android:layout_width="0dp"
                         android:layout_height="1dp"
@@ -268,38 +336,43 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_chip_light"
-                        android:paddingHorizontal="10dp"
+                        android:backgroundTint="?attr/colorPrimaryContainer"
+                        android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp"
-                        android:text="WiFi"
-                        android:textColor="#2E6BFF"
-                        android:textSize="12sp" />
+                        android:text="Wi-Fi"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE" />
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="4dp" />
 
-                <!-- Row: IP Address (Repeat this structure for others) -->
+                <!-- Row: IP Address -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="4dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_ip_address"
-                        app:tint="#555555" />
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="14dp"
                         android:text="IP Address"
-                        android:textColor="#444444" />
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
 
                     <View
                         android:layout_width="0dp"
@@ -310,39 +383,44 @@
                         android:id="@+id/tvIpAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:background="#F0F0F0"
-                        android:padding="4dp"
+                        android:background="@drawable/bg_chip_light"
+                        android:backgroundTint="?attr/colorSurfaceContainerHigh"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
                         android:text="192.168.1.128"
-                        android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE" />
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="4dp" />
 
-                <!-- Row: IP Address (Repeat this structure for others) -->
+                <!-- Row: MAC Address -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="4dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_mac_address"
-                        app:tint="#555555" />
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="14dp"
                         android:text="MAC Address"
-                        android:textColor="#444444" />
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
 
                     <View
                         android:layout_width="0dp"
@@ -353,38 +431,44 @@
                         android:id="@+id/tvMacAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#F0F0F0"
-                        android:padding="4dp"
-                        android:text="192.168.1.128"
-                        android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:background="@drawable/bg_chip_light"
+                        android:backgroundTint="?attr/colorSurfaceContainerHigh"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="02:00:00:00:00:00"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE" />
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="4dp" />
 
-                <!-- Row: IP Address (Repeat this structure for others) -->
+                <!-- Row: Subnet Mask -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="4dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_subnet_mask"
-                        app:tint="#555555" />
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="14dp"
                         android:text="Subnet Mask"
-                        android:textColor="#444444" />
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
 
                     <View
                         android:layout_width="0dp"
@@ -395,38 +479,44 @@
                         android:id="@+id/tvSubnetMask"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#F0F0F0"
-                        android:padding="4dp"
-                        android:text="192.168.1.128"
-                        android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:background="@drawable/bg_chip_light"
+                        android:backgroundTint="?attr/colorSurfaceContainerHigh"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="255.255.255.0"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE" />
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="4dp" />
 
-                <!-- Row: IP Address (Repeat this structure for others) -->
+                <!-- Row: Gateway -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="4dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_gate_way"
-                        app:tint="#555555" />
+                        app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="GateWay"
-                        android:textColor="#444444" />
+                        android:layout_marginStart="14dp"
+                        android:text="Gateway"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
 
                     <View
                         android:layout_width="0dp"
@@ -437,13 +527,15 @@
                         android:id="@+id/tvGateWay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#F0F0F0"
-                        android:padding="4dp"
-                        android:text="192.168.1.128"
-                        android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:background="@drawable/bg_chip_light"
+                        android:backgroundTint="?attr/colorSurfaceContainerHigh"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="192.168.1.1"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

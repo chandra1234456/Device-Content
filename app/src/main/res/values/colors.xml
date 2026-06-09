@@ -43,4 +43,17 @@
     <color name="text_primary">#111111</color>
     <color name="text_secondary">#666666</color>
     <color name="text_tertiary">#777777</color>
+
+    <!-- Category colors for modern pastel tinted icons -->
+    <color name="category_network">#2196F3</color>
+    <color name="category_battery">#4CAF50</color>
+    <color name="category_locale">#009688</color>
+    <color name="category_screen">#9C27B0</color>
+    <color name="category_apps">#3F51B5</color>
+    <color name="category_build">#FF5722</color>
+    <color name="category_memory">#E91E63</color>
+    <color name="category_cpu">#FFC107</color>
+    <color name="category_sensors">#F44336</color>
+    <color name="category_camera">#03A9F4</color>
+    <color name="category_details">#00BCD4</color>
 </resources>
