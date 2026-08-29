@@ -6,9 +6,11 @@ import android.app.Activity
 import android.net.Uri
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -79,6 +81,10 @@ fun AppNavHost(
                 onOpenBattery = { navController.navigate(Routes.BATTERY) },
                 onOpenDiagnostics = { navController.navigate(Routes.DIAGNOSTICS) },
                 onOpenMonitor = { navController.navigate(Routes.MONITOR) },
+                onOpenNetworkAnalyzer = { navController.navigate(Routes.NETWORK_ANALYZER) },
+                onOpenSensorExplorer = { navController.navigate(Routes.SENSOR_EXPLORER) },
+                onOpenBenchmark = { navController.navigate(Routes.BENCHMARK) },
+                onOpenStorageAnalyzer = { navController.navigate(Routes.STORAGE_ANALYZER) },
                 isUpdateReady = isUpdateReady,
                 onRestartToUpdate = onRestartToUpdate,
                 viewModel = viewModel(
@@ -130,10 +136,15 @@ fun AppNavHost(
                         DiagnosticTestId.VIBRATION -> Routes.VIBRATION_TEST
                         DiagnosticTestId.FLASH -> Routes.FLASH_TEST
                         DiagnosticTestId.DISPLAY -> Routes.DISPLAY_TEST
+                        DiagnosticTestId.SPEAKER -> Routes.SPEAKER_TEST
+                        DiagnosticTestId.MICROPHONE -> Routes.MIC_TEST
+                        DiagnosticTestId.CAMERA -> Routes.CAMERA_TEST
+                        DiagnosticTestId.GPS -> Routes.LOCATION_TEST
                         else -> Routes.sensorTest(testId)
                     }
                     navController.navigate(route)
                 },
+                onOpenCheckup = { navController.navigate(Routes.PHONE_CHECKUP) },
                 viewModel = viewModel(
                     factory = DiagnosticsViewModel.Factory(
                         appContainer.deviceInfoRepository,
@@ -164,6 +175,100 @@ fun AppNavHost(
             DisplayTestScreen(
                 onBack = { navController.popBackStack() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.DISPLAY, result) },
+            )
+        }
+        composable(Routes.SPEAKER_TEST) {
+            com.chandra.practice.deviceinfo.ui.screens.diagnostics.SpeakerTestScreen(
+                onBack = { navController.popBackStack() },
+                onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.SPEAKER, result) },
+            )
+        }
+        composable(Routes.MIC_TEST) {
+            com.chandra.practice.deviceinfo.ui.screens.diagnostics.MicrophoneTestScreen(
+                onBack = { navController.popBackStack() },
+                onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.MICROPHONE, result) },
+            )
+        }
+        composable(Routes.CAMERA_TEST) {
+            com.chandra.practice.deviceinfo.ui.screens.diagnostics.CameraTestScreen(
+                onBack = { navController.popBackStack() },
+                onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.CAMERA, result) },
+            )
+        }
+        composable(Routes.LOCATION_TEST) {
+            com.chandra.practice.deviceinfo.ui.screens.diagnostics.LocationTestScreen(
+                onBack = { navController.popBackStack() },
+                onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.GPS, result) },
+            )
+        }
+        composable(Routes.PHONE_CHECKUP) {
+            val diagViewModel: DiagnosticsViewModel = viewModel(
+                factory = DiagnosticsViewModel.Factory(
+                    appContainer.deviceInfoRepository,
+                    appContainer.diagnosticsResultsRepository,
+                ),
+            )
+            val diagState by diagViewModel.uiState.collectAsStateWithLifecycle()
+            com.chandra.practice.deviceinfo.ui.screens.diagnostics.PhoneCheckupScreen(
+                tests = diagState.tests,
+                onRunAutoChecks = { diagViewModel.runAutomaticChecks() },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.NETWORK_ANALYZER) {
+            val netVm = viewModel<com.chandra.practice.deviceinfo.ui.screens.network.NetworkViewModel>(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        @Suppress("UNCHECKED_CAST")
+                        return com.chandra.practice.deviceinfo.ui.screens.network.NetworkViewModel(appContainer.deviceInfoRepository) as T
+                    }
+                },
+            )
+            com.chandra.practice.deviceinfo.ui.screens.network.NetworkAnalyzerScreen(
+                viewModel = netVm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.SENSOR_EXPLORER) {
+            val sensorVm = viewModel<com.chandra.practice.deviceinfo.ui.screens.sensors.SensorExplorerViewModel>(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        @Suppress("UNCHECKED_CAST")
+                        return com.chandra.practice.deviceinfo.ui.screens.sensors.SensorExplorerViewModel(appContainer.sensorExplorerRepository) as T
+                    }
+                },
+            )
+            com.chandra.practice.deviceinfo.ui.screens.sensors.SensorExplorerScreen(
+                viewModel = sensorVm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.BENCHMARK) {
+            val benchVm = viewModel<com.chandra.practice.deviceinfo.ui.screens.benchmark.BenchmarkViewModel>(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        @Suppress("UNCHECKED_CAST")
+                        return com.chandra.practice.deviceinfo.ui.screens.benchmark.BenchmarkViewModel(appContainer.benchmarkRepository) as T
+                    }
+                },
+            )
+            com.chandra.practice.deviceinfo.ui.screens.benchmark.BenchmarkScreen(
+                viewModel = benchVm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.STORAGE_ANALYZER) {
+            val storageVm = viewModel<com.chandra.practice.deviceinfo.ui.screens.storage.StorageViewModel>(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        @Suppress("UNCHECKED_CAST")
+                        return com.chandra.practice.deviceinfo.ui.screens.storage.StorageViewModel(appContainer.deviceInfoRepository) as T
+                    }
+                },
+            )
+            com.chandra.practice.deviceinfo.ui.screens.storage.StorageAnalyzerScreen(
+                viewModel = storageVm,
+                onBack = { navController.popBackStack() },
             )
         }
         composable(

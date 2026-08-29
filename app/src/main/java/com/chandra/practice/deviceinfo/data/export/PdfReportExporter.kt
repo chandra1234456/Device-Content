@@ -158,4 +158,134 @@ object PdfReportExporter {
             PdfSaveLocation.AppFolder(fileName, dir.path)
         }
     }
+
+    suspend fun exportConsolidatedReport(
+        context: Context,
+        appName: String,
+        healthScoreText: String,
+        categories: List<Pair<String, List<DeviceInfoItem>>>,
+    ): PdfSaveLocation = withContext(Dispatchers.IO) {
+        val fileName = buildFileName("Full_Device_Report")
+        val document = PdfDocument()
+        try {
+            val titlePaint = TextPaint().apply { isAntiAlias = true; textSize = 22f; isFakeBoldText = true; color = Color.parseColor("#1C1B1F") }
+            val subTitlePaint = TextPaint().apply { isAntiAlias = true; textSize = 14f; isFakeBoldText = true; color = Color.parseColor("#6750A4") }
+            val metaPaint = TextPaint().apply { isAntiAlias = true; textSize = 11f; color = Color.parseColor("#49454F") }
+            val labelPaint = TextPaint().apply { isAntiAlias = true; textSize = 11f; isFakeBoldText = true; color = Color.parseColor("#6750A4") }
+            val valuePaint = TextPaint().apply { isAntiAlias = true; textSize = 12f; color = Color.parseColor("#1C1B1F") }
+            val footerPaint = TextPaint().apply { isAntiAlias = true; textSize = 9f; color = Color.parseColor("#79747E") }
+
+            val contentWidth = (PAGE_WIDTH - MARGIN * 2).toInt()
+            var pageNumber = 1
+            var page = document.startPage(PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create())
+            var canvas = page.canvas
+            var y = MARGIN
+
+            fun finishPage() {
+                canvas.drawText("Page $pageNumber", MARGIN, PAGE_HEIGHT - 20f, footerPaint)
+                canvas.drawText(
+                    "$DEVELOPER_NAME · $DEVELOPER_EMAIL",
+                    PAGE_WIDTH - MARGIN,
+                    PAGE_HEIGHT - 20f,
+                    footerPaint.apply { textAlign = android.graphics.Paint.Align.RIGHT },
+                )
+                footerPaint.textAlign = android.graphics.Paint.Align.LEFT
+                document.finishPage(page)
+            }
+
+            fun startNewPage() {
+                finishPage()
+                pageNumber++
+                page = document.startPage(PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create())
+                canvas = page.canvas
+                y = MARGIN
+            }
+
+            // Header
+            canvas.drawText(appName, MARGIN, y + 20f, titlePaint)
+            y += 32f
+            canvas.drawText("Consolidated Device & Health Report", MARGIN, y + 14f, subTitlePaint)
+            y += 20f
+            canvas.drawText("Overall Health Score: $healthScoreText", MARGIN, y + 14f, subTitlePaint)
+            y += 20f
+            canvas.drawText(
+                "Generated: ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())}",
+                MARGIN,
+                y + 14f,
+                metaPaint,
+            )
+            y += 18f
+            canvas.drawText("Developer: $DEVELOPER_NAME ($DEVELOPER_EMAIL)", MARGIN, y + 14f, metaPaint)
+            y += 30f
+
+            categories.forEach { (catTitle, items) ->
+                if (y + 40f > PAGE_HEIGHT - MARGIN) {
+                    startNewPage()
+                }
+
+                canvas.drawText(catTitle.uppercase(Locale.getDefault()), MARGIN, y + 16f, subTitlePaint)
+                y += 26f
+
+                items.forEach { item ->
+                    val labelLayout = StaticLayout.Builder.obtain(item.label, 0, item.label.length, labelPaint, contentWidth).build()
+                    val valueLayout = StaticLayout.Builder.obtain(item.value, 0, item.value.length, valuePaint, contentWidth).build()
+                    val blockHeight = labelLayout.height + valueLayout.height + 14f
+
+                    if (y + blockHeight > PAGE_HEIGHT - MARGIN) {
+                        startNewPage()
+                    }
+
+                    canvas.save()
+                    canvas.translate(MARGIN, y)
+                    labelLayout.draw(canvas)
+                    canvas.restore()
+                    y += labelLayout.height + 2f
+
+                    canvas.save()
+                    canvas.translate(MARGIN, y)
+                    valueLayout.draw(canvas)
+                    canvas.restore()
+                    y += valueLayout.height + 12f
+                }
+                y += 10f
+            }
+
+            finishPage()
+            saveToDownloads(context, fileName, document)
+        } finally {
+            document.close()
+        }
+    }
+
+    fun sharePdfReport(context: Context, saveLocation: PdfSaveLocation) {
+        try {
+            val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                when (saveLocation) {
+                    is PdfSaveLocation.Downloads -> {
+                        putExtra(android.content.Intent.EXTRA_SUBJECT, "Device Report PDF")
+                        putExtra(android.content.Intent.EXTRA_TEXT, "Here is my Device Information PDF report: ${saveLocation.fileName}")
+                    }
+                    is PdfSaveLocation.AppFolder -> {
+                        val file = File(saveLocation.path, saveLocation.fileName)
+                        val uri = androidx.core.content.FileProvider.getUriForFile(
+                            context,
+                            "${context.packageName}.fileprovider",
+                            file,
+                        )
+                        putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                }
+            }
+            context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Device Report PDF"))
+        } catch (e: Exception) {
+            // Fallback text share if uri sharing fails
+            val textIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(android.content.Intent.EXTRA_TEXT, "Device Report generated with ${saveLocation}")
+            }
+            context.startActivity(android.content.Intent.createChooser(textIntent, "Share Device Report"))
+        }
+    }
 }

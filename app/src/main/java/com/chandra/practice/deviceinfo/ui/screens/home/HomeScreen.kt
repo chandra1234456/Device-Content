@@ -23,11 +23,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Monitor
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -37,6 +43,8 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
@@ -80,6 +88,11 @@ import com.chandra.practice.deviceinfo.ui.components.StatCard
 import com.chandra.practice.deviceinfo.ui.permissions.hasCameraPermission
 import kotlinx.coroutines.launch
 
+enum class MainTab(val title: String, val icon: ImageVector) {
+    HOME("Home", Icons.Filled.Home),
+    SYSTEM("System", Icons.Filled.Dns),
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -88,6 +101,10 @@ fun HomeScreen(
     onOpenBattery: () -> Unit,
     onOpenDiagnostics: () -> Unit,
     onOpenMonitor: () -> Unit,
+    onOpenNetworkAnalyzer: () -> Unit = {},
+    onOpenSensorExplorer: () -> Unit = {},
+    onOpenBenchmark: () -> Unit = {},
+    onOpenStorageAnalyzer: () -> Unit = {},
     viewModel: HomeViewModel,
     isUpdateReady: Boolean = false,
     onRestartToUpdate: () -> Unit = {},
@@ -100,6 +117,7 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val useRail = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
     var showExportDialog by remember { mutableStateOf(false) }
+    var selectedTab by remember { mutableStateOf(MainTab.HOME) }
 
     var cameraPermissionGranted by remember { mutableStateOf(hasCameraPermission(context)) }
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -142,13 +160,25 @@ fun HomeScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Device Content") },
+                title = { Text(if (selectedTab == MainTab.HOME) "Device Content" else "System Info") },
                 actions = {
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
                 },
             )
+        },
+        bottomBar = {
+            NavigationBar {
+                MainTab.entries.forEach { tab ->
+                    NavigationBarItem(
+                        selected = selectedTab == tab,
+                        onClick = { selectedTab = tab },
+                        icon = { Icon(tab.icon, contentDescription = tab.title) },
+                        label = { Text(tab.title) },
+                    )
+                }
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -158,114 +188,127 @@ fun HomeScreen(
             )
         },
     ) { padding ->
-        // The whole screen is one scrolling list — dashboard header cards are items at the top,
-        // followed by the selected category's rows — rather than a fixed header squeezing an
-        // inner scrollable list into whatever space is left over.
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-        ) {
-            if (useRail) {
-                CategoryNavigationRail(selected = state.selectedCategory, onSelect = viewModel::selectCategory)
+        when (selectedTab) {
+            MainTab.HOME -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentPadding = PaddingValues(bottom = 80.dp),
+                ) {
+                    if (isUpdateReady) {
+                        item {
+                            UpdateReadyBanner(
+                                onRestart = onRestartToUpdate,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            )
+                        }
+                    }
+
+                    state.healthScore?.let { healthScore ->
+                        item {
+                            HealthScoreCard(
+                                healthScore = healthScore,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            )
+                        }
+                    }
+
+                    item {
+                        QuickActionsGrid(
+                            onOpenBattery = onOpenBattery,
+                            onOpenDiagnostics = onOpenDiagnostics,
+                            onOpenMonitor = onOpenMonitor,
+                            onOpenNetworkAnalyzer = onOpenNetworkAnalyzer,
+                            onOpenSensorExplorer = onOpenSensorExplorer,
+                            onOpenBenchmark = onOpenBenchmark,
+                            onOpenStorageAnalyzer = onOpenStorageAnalyzer,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                    }
+
+                    item {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            items(state.quickStats, key = { it.label }) { stat -> StatCard(stat) }
+                        }
+                    }
+                }
             }
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                contentPadding = PaddingValues(bottom = 96.dp),
-            ) {
-                if (isUpdateReady) {
-                    item {
-                        UpdateReadyBanner(
-                            onRestart = onRestartToUpdate,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        )
+            MainTab.SYSTEM -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                ) {
+                    if (useRail) {
+                        CategoryNavigationRail(selected = state.selectedCategory, onSelect = viewModel::selectCategory)
                     }
-                }
 
-                state.healthScore?.let { healthScore ->
-                    item {
-                        HealthScoreCard(
-                            healthScore = healthScore,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        )
-                    }
-                }
-
-                item {
-                    QuickActionsGrid(
-                        onOpenBattery = onOpenBattery,
-                        onOpenDiagnostics = onOpenDiagnostics,
-                        onOpenMonitor = onOpenMonitor,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
-
-                item {
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        contentPadding = PaddingValues(bottom = 80.dp),
                     ) {
-                        items(state.quickStats, key = { it.label }) { stat -> StatCard(stat) }
-                    }
-                }
-
-                if (!useRail) {
-                    item {
-                        CategoryChipsRow(
-                            categories = InfoCategory.entries,
-                            selected = state.selectedCategory,
-                            onSelect = viewModel::selectCategory,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                        )
-                    }
-                }
-
-                item {
-                    AppSearchField(
-                        query = state.searchQuery,
-                        onQueryChange = viewModel::onSearchQueryChange,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    )
-                }
-
-                item { Spacer(Modifier.height(4.dp)) }
-
-                if (needsCameraPermission) {
-                    item {
-                        CameraPermissionRationale(
-                            onGrant = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    }
-                } else {
-                    when (val content = state.content) {
-                        is CategoryContent.Loading -> item { LoadingListState() }
-                        is CategoryContent.Error -> item {
-                            ErrorState(message = content.message, modifier = Modifier.padding(horizontal = 16.dp))
+                        if (!useRail) {
+                            item {
+                                CategoryChipsRow(
+                                    categories = InfoCategory.entries,
+                                    selected = state.selectedCategory,
+                                    onSelect = viewModel::selectCategory,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                )
+                            }
                         }
-                        is CategoryContent.Empty -> item {
-                            EmptyState(message = content.message, modifier = Modifier.padding(horizontal = 16.dp))
+
+                        item {
+                            AppSearchField(
+                                query = state.searchQuery,
+                                onQueryChange = viewModel::onSearchQueryChange,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                            )
                         }
-                        is CategoryContent.Success -> {
-                            if (filteredItems.isEmpty()) {
-                                item {
-                                    EmptyState(
-                                        message = "No results for \"${state.searchQuery}\"",
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                    )
+
+                        item { Spacer(Modifier.height(4.dp)) }
+
+                        if (needsCameraPermission) {
+                            item {
+                                CameraPermissionRationale(
+                                    onGrant = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                )
+                            }
+                        } else {
+                            when (val content = state.content) {
+                                is CategoryContent.Loading -> item { LoadingListState() }
+                                is CategoryContent.Error -> item {
+                                    ErrorState(message = content.message, modifier = Modifier.padding(horizontal = 16.dp))
                                 }
-                            } else {
-                                items(filteredItems, key = { it.key }) { item ->
-                                    InfoRowCard(
-                                        item = item,
-                                        onCopy = {
-                                            clipboardManager.setText(AnnotatedString("${item.label}: ${item.value}"))
-                                        },
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                                    )
+                                is CategoryContent.Empty -> item {
+                                    EmptyState(message = content.message, modifier = Modifier.padding(horizontal = 16.dp))
+                                }
+                                is CategoryContent.Success -> {
+                                    if (filteredItems.isEmpty()) {
+                                        item {
+                                            EmptyState(
+                                                message = "No results for \"${state.searchQuery}\"",
+                                                modifier = Modifier.padding(horizontal = 16.dp),
+                                            )
+                                        }
+                                    } else {
+                                        items(filteredItems, key = { it.key }) { item ->
+                                            InfoRowCard(
+                                                item = item,
+                                                onCopy = {
+                                                    clipboardManager.setText(AnnotatedString("${item.label}: ${item.value}"))
+                                                },
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -284,15 +327,17 @@ fun HomeScreen(
             onConfirm = {
                 showExportDialog = false
                 coroutineScope.launch {
-                    val message = try {
-                        when (val result = PdfReportExporter.export(context, appName, categoryTitle, exportItems)) {
+                    try {
+                        val result = PdfReportExporter.export(context, appName, categoryTitle, exportItems)
+                        val message = when (result) {
                             is PdfSaveLocation.Downloads -> "Saved to Downloads: ${result.fileName}"
                             is PdfSaveLocation.AppFolder -> "Saved to app storage: ${result.fileName}"
                         }
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        PdfReportExporter.sharePdfReport(context, result)
                     } catch (e: Exception) {
-                        "Couldn't save the PDF: ${e.message ?: "unknown error"}"
+                        Toast.makeText(context, "Couldn't save the PDF: ${e.message ?: "unknown error"}", Toast.LENGTH_LONG).show()
                     }
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                 }
             },
         )
@@ -343,21 +388,29 @@ private fun QuickActionsGrid(
     onOpenBattery: () -> Unit,
     onOpenDiagnostics: () -> Unit,
     onOpenMonitor: () -> Unit,
+    onOpenNetworkAnalyzer: () -> Unit,
+    onOpenSensorExplorer: () -> Unit,
+    onOpenBenchmark: () -> Unit,
+    onOpenStorageAnalyzer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val actions = listOf(
         Triple(Icons.Filled.BatteryFull, "Battery", onOpenBattery),
         Triple(Icons.Filled.Science, "Diagnose", onOpenDiagnostics),
         Triple(Icons.Filled.Monitor, "Monitor", onOpenMonitor),
+        Triple(Icons.Filled.Wifi, "Network", onOpenNetworkAnalyzer),
+        Triple(Icons.Filled.Sensors, "Sensors", onOpenSensorExplorer),
+        Triple(Icons.Filled.Speed, "Benchmark", onOpenBenchmark),
+        Triple(Icons.Filled.Storage, "Storage", onOpenStorageAnalyzer),
     )
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         actions.chunked(2).forEach { rowActions ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 rowActions.forEach { (icon, label, onClick) ->
                     QuickActionCard(icon = icon, label = label, onClick = onClick, modifier = Modifier.weight(1f))

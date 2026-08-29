@@ -557,4 +557,71 @@ class DeviceInfoRepository(private val context: Context) {
             item(c, "Variant", locale.variant),
         )
     }
+
+    // ---- Network Latency & Ping ----
+
+    suspend fun measurePing(host: String = "8.8.8.8"): Long = withContext(Dispatchers.IO) {
+        try {
+            val startTime = System.currentTimeMillis()
+            val address = java.net.InetAddress.getByName(host)
+            val reachable = address.isReachable(2000)
+            val elapsed = System.currentTimeMillis() - startTime
+            if (reachable) elapsed else -1L
+        } catch (e: Exception) {
+            -1L
+        }
+    }
+
+    // ---- Storage Breakdown ----
+
+    data class StorageCategorySize(
+        val categoryName: String,
+        val bytes: Long,
+    )
+
+    suspend fun getStorageCategoryBreakdown(): List<StorageCategorySize> = withContext(Dispatchers.IO) {
+        val list = mutableListOf<StorageCategorySize>()
+        val contentResolver = context.contentResolver
+
+        fun queryMediaStoreSize(uri: android.net.Uri): Long {
+            var totalBytes = 0L
+            try {
+                val projection = arrayOf(android.provider.MediaStore.MediaColumns.SIZE)
+                contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+                    val sizeIndex = cursor.getColumnIndexOrThrow(android.provider.MediaStore.MediaColumns.SIZE)
+                    while (cursor.moveToNext()) {
+                        totalBytes += cursor.getLong(sizeIndex)
+                    }
+                }
+            } catch (e: Exception) {
+                // Return 0 if query fails or permission denied
+            }
+            return totalBytes
+        }
+
+        val imageBytes = queryMediaStoreSize(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val videoBytes = queryMediaStoreSize(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+        val audioBytes = queryMediaStoreSize(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+        val downloadsBytes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            queryMediaStoreSize(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI)
+        } else 0L
+
+        val internalDir = Environment.getDataDirectory()
+        val stat = StatFs(internalDir.path)
+        val totalBytes = stat.blockCountLong * stat.blockSizeLong
+        val freeBytes = stat.availableBlocksLong * stat.blockSizeLong
+        val usedBytes = totalBytes - freeBytes
+
+        val mediaTotal = imageBytes + videoBytes + audioBytes + downloadsBytes
+        val appsAndSystemBytes = (usedBytes - mediaTotal).coerceAtLeast(0L)
+
+        list.add(StorageCategorySize("Photos & Images", imageBytes))
+        list.add(StorageCategorySize("Videos", videoBytes))
+        list.add(StorageCategorySize("Audio & Music", audioBytes))
+        list.add(StorageCategorySize("Downloads", downloadsBytes))
+        list.add(StorageCategorySize("Apps & System Data", appsAndSystemBytes))
+        list.add(StorageCategorySize("Free Storage", freeBytes))
+
+        list
+    }
 }

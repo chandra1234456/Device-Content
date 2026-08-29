@@ -11,4 +11,6 @@ class AppContainer(context: Context) {
     val deviceInfoRepository = DeviceInfoRepository(appContext)
     val userPreferencesRepository = UserPreferencesRepository(appContext)
     val diagnosticsResultsRepository = DiagnosticsResultsRepository()
+    val sensorExplorerRepository = com.chandra.practice.deviceinfo.data.repository.SensorExplorerRepository(appContext)
+    val benchmarkRepository = com.chandra.practice.deviceinfo.data.repository.BenchmarkRepository(appContext)
 }

@@ -7,45 +7,53 @@ private const val LAST_UPDATED = "August 29, 2026"
 
 private val TERMS_SECTIONS = listOf(
     LegalSection(
-        heading = "Acceptance of these terms",
-        body = "By installing or using Device Content, you agree to these terms. If you don't agree, " +
-            "please don't use the app.",
+        heading = "1. Acceptance of Terms",
+        body = "By downloading, installing, or accessing Device Content, you agree to be bound by these Terms " +
+            "of Service. If you do not agree to all terms outlined herein, please discontinue use of the " +
+            "application immediately.",
     ),
     LegalSection(
-        heading = "What this app does",
-        body = "Device Content is an informational utility app that reads and displays information " +
-            "already available on your device — hardware, software, network, sensors, and more — so " +
-            "you can view, copy, or export it for your own reference.",
+        heading = "2. Scope of Software Services",
+        body = "Device Content provides user-initiated hardware diagnostic tests (Display, Touch, Vibration, " +
+            "Flash, Proximity, Speaker, Microphone, Camera, GPS, Wi-Fi), real-time battery analytics, sensor " +
+            "exploration, performance benchmarks (CPU, RAM, Storage throughput), and MediaStore storage category " +
+            "breakdowns. All information is inspected locally on your Android device.",
     ),
     LegalSection(
-        heading = "Acceptable use",
-        body = "Use the app only on devices you own or are authorized to use, and only for lawful " +
-            "purposes. Don't attempt to reverse-engineer, decompile, or misuse the app beyond its " +
-            "intended purpose.",
+        heading = "3. Performance Benchmarks & Hardware Safety",
+        body = "The Performance Benchmark tool executes localized multi-threaded CPU computations, RAM buffer " +
+            "transfers, and temporary cache storage write/read tests. These stress tests are designed to evaluate " +
+            "device capabilities without causing hardware strain or permanent modifications. You agree to run " +
+            "benchmarks at your own risk under standard operating temperatures.",
     ),
     LegalSection(
-        heading = "No warranty",
-        body = "The app is provided \"as is,\" without warranties of any kind. While accuracy is the " +
-            "goal, some values — like sensor availability or CPU details — depend on information your " +
-            "device's manufacturer exposes to Android, and may not always be complete or exact.",
+        heading = "4. Diagnostic Disclaimer & No Professional Warranty",
+        body = "All diagnostic results (Pass, Fail, or Not Tested) and health scores provided by Device Content " +
+            "are for personal informational purposes only. The app relies on hardware capabilities exposed " +
+            "by your device manufacturer through standard Android APIs. Diagnostic results do not constitute " +
+            "an official manufacturer warranty, certified repair diagnosis, or hardware guarantee.",
     ),
     LegalSection(
-        heading = "Limitation of liability",
-        body = "To the fullest extent permitted by law, the developer isn't liable for any damages or " +
-            "decisions made based on information displayed by the app.",
+        heading = "5. Acceptable Use & Intellectual Property",
+        body = "You agree to use Device Content solely on devices you own or are authorized to operate, and " +
+            "in compliance with applicable local laws. You may not decompile, reverse-engineer, modify, " +
+            "or redistribute the application binary without prior permission.",
     ),
     LegalSection(
-        heading = "Children's use",
-        body = "Device Content is not directed at children under 13.",
+        heading = "6. Limitation of Liability",
+        body = "To the maximum extent permitted by applicable law, the developer shall not be liable for any " +
+            "indirect, incidental, consequential, or special damages arising out of your use or inability " +
+            "to use the application or reliance on any diagnostic data displayed.",
     ),
     LegalSection(
-        heading = "Changes to these terms",
-        body = "These terms may be updated as the app evolves. Continued use after an update means you " +
-            "accept the revised terms.",
+        heading = "7. Modifications to Terms",
+        body = "We reserve the right to modify these Terms at any time. Continued use of the application " +
+            "following any published updates constitutes your acceptance of the revised Terms.",
     ),
     LegalSection(
-        heading = "Contact",
-        body = "Questions about these terms can be sent to chandradev3660@gmail.com.",
+        heading = "8. Contact & Legal Inquiries",
+        body = "For legal questions or inquiries regarding these Terms, contact the developer at: " +
+            "chandradev3660@gmail.com.",
     ),
 )
 

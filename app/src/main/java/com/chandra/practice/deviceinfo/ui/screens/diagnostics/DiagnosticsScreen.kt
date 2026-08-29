@@ -3,6 +3,7 @@ package com.chandra.practice.deviceinfo.ui.screens.diagnostics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +43,7 @@ import com.chandra.practice.deviceinfo.ui.theme.HealthGood
 fun DiagnosticsScreen(
     onBack: () -> Unit,
     onOpenTest: (DiagnosticTestId) -> Unit,
+    onOpenCheckup: () -> Unit = {},
     viewModel: DiagnosticsViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -82,8 +84,13 @@ fun DiagnosticsScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(12.dp))
-                    Button(onClick = viewModel::runAutomaticSensorChecks, modifier = Modifier.fillMaxWidth()) {
-                        Text("Run All Automatic Checks")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(onClick = viewModel::runAutomaticSensorChecks, modifier = Modifier.weight(1f)) {
+                            Text("Auto Sensors")
+                        }
+                        Button(onClick = onOpenCheckup, modifier = Modifier.weight(1f)) {
+                            Text("Phone Checkup Flow")
+                        }
                     }
                 }
             }

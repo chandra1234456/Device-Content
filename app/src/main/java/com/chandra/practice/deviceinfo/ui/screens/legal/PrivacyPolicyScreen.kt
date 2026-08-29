@@ -7,63 +7,64 @@ private const val LAST_UPDATED = "August 29, 2026"
 
 private val PRIVACY_SECTIONS = listOf(
     LegalSection(
-        heading = "Overview",
-        body = "Device Content is an informational utility app. It reads information that is already " +
-            "available on your device and displays it to you. This policy explains exactly what it can " +
-            "access, how that information is used, and what stays entirely under your control.",
+        heading = "1. Overview & Commitment to Privacy",
+        body = "Device Content is an offline-first diagnostic and system information utility. " +
+            "We prioritize your privacy above all else. This app is designed to inspect hardware specs, " +
+            "battery metrics, network performance, and system diagnostics locally on your device. " +
+            "No personal information, device identifier, or telemetry is ever collected, transmitted, " +
+            "or sold to external servers.",
     ),
     LegalSection(
-        heading = "Information the app can access",
-        body = "Device model, manufacturer and brand; Android version and build details; CPU and " +
-            "hardware details; RAM and storage usage; battery level and health; screen and display " +
-            "specs; sensors present on your device; the number of cameras and which way they face " +
-            "(never photos or video); network connection type and, when available, Wi-Fi details; " +
-            "your device's locale settings; and this app's own version and install info.",
+        heading = "2. Explicit Permissions & Just-In-Time Usage",
+        body = "The app requests permissions strictly Just-In-Time (JIT) when accessing specific " +
+            "diagnostic tools, and operates fully even if permissions are denied:\n\n" +
+            "• Camera (CAMERA): Requested only when opening the Camera Diagnostic test to verify front/rear " +
+            "camera sensor counts and lens capabilities. No photos or videos are ever recorded or stored.\n" +
+            "• Microphone (RECORD_AUDIO): Requested only during the Microphone Diagnostic test to measure real-time " +
+            "sound pressure / amplitude levels. Audio buffers are processed in temporary RAM and discarded immediately.\n" +
+            "• Location (ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION): Requested during the Wi-Fi Signal Meter " +
+            "and GPS Accuracy test as mandated by Android OS to retrieve SSID signal strength and satellite positioning.\n" +
+            "• Bluetooth (BLUETOOTH_CONNECT): Requested on Android 12+ solely to inspect local Bluetooth adapter " +
+            "availability and state.\n" +
+            "• Storage & MediaStore: Uses Android MediaStore queries to present local storage breakdowns (Photos, " +
+            "Videos, Audio, Downloads). No files are modified or deleted.",
     ),
     LegalSection(
-        heading = "How this information is used",
-        body = "It's shown on-screen in the app's dashboard. It's only ever gathered into a report when " +
-            "you tap Copy, Share, or Export — an action you have to take yourself. Nothing is collected, " +
-            "logged, or sent anywhere automatically.",
+        heading = "3. On-Device Storage & Local Data Retention",
+        body = "Application preferences (such as dark mode settings and onboarding completion flags) are " +
+            "saved locally on your device using Android DataStore. Diagnostic test results are stored in local " +
+            "application memory. Clearing app data or uninstalling the app permanently erases all saved preferences.",
     ),
     LegalSection(
-        heading = "What's stored on your device",
-        body = "Your theme preference and whether you've completed the first-run screen are saved " +
-            "locally using Android's DataStore. This stays on your device and is removed if you " +
-            "uninstall the app.",
+        heading = "4. Third-Party Services & Analytics",
+        body = "Device Content contains zero third-party tracking, advertising SDKs, or external user telemetry.\n\n" +
+            "• Google Play In-App Updates: The app utilizes Google Play Core APIs to notify you when a mandatory " +
+            "or optional app update is available on the Google Play Store. These update checks are managed " +
+            "securely by Google Play Services.\n" +
+            "• PDF Report Sharing: Exported PDF diagnostic reports are generated locally and shared exclusively " +
+            "via standard Android System Share intents initiated directly by you.",
     ),
     LegalSection(
-        heading = "What this app doesn't do",
-        body = "No analytics SDK, no advertising SDK, no crash-reporting service that uploads data, no " +
-            "account or sign-in, and no server of any kind — there's nowhere for your data to go.",
+        heading = "5. User Rights (GDPR & CCPA Compliance)",
+        body = "Under international privacy regulations (including GDPR and CCPA):\n" +
+            "• Right to Access: You retain full visual access to all inspected system data within the app.\n" +
+            "• Right to Portability: You can export a consolidated PDF report of your device health at any time.\n" +
+            "• Right to Deletion: Simply clear the app storage or uninstall the app to remove all local preferences.",
     ),
     LegalSection(
-        heading = "Permissions",
-        body = "Network state permissions let the app show your connection type on-screen; they don't " +
-            "send any data anywhere by themselves. Camera permission is requested only when you open " +
-            "the Camera tab, solely to read how many cameras your device has and which way they face — " +
-            "the app never opens a camera session or captures images or video.",
+        heading = "6. Children's Privacy",
+        body = "Device Content does not target children under the age of 13, nor does it collect any personal " +
+            "identifiable information from any user of any age.",
     ),
     LegalSection(
-        heading = "Google Play services",
-        body = "The app uses Google Play's In-App Update API to check whether a newer version is " +
-            "available, and standard Play Store share/rate intents when you tap those buttons in " +
-            "Settings. Those requests are handled by the Play Store app itself, not by any server this " +
-            "app operates — it doesn't have one.",
+        heading = "7. Updates & Policy Modifications",
+        body = "We may revise this Privacy Policy periodically to reflect new features or Play Store compliance " +
+            "requirements. The date at the top of this document indicates when it was last revised.",
     ),
     LegalSection(
-        heading = "Children's privacy",
-        body = "Device Content is not directed at children under 13. Since the app doesn't collect data " +
-            "from anyone, it doesn't knowingly collect data from children either.",
-    ),
-    LegalSection(
-        heading = "Changes to this policy",
-        body = "This policy may be updated as the app's features change. The \"last updated\" date above " +
-            "reflects the latest revision — check back occasionally if you'd like to stay current.",
-    ),
-    LegalSection(
-        heading = "Contact",
-        body = "Questions about this policy can be sent to chandradev3660@gmail.com.",
+        heading = "8. Contact Information",
+        body = "For any questions or privacy inquiries, contact the developer directly at: " +
+            "chandradev3660@gmail.com.",
     ),
 )
 

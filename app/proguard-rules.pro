@@ -12,10 +12,12 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line number information for Google Play Console de-obfuscation & crash stack traces.
+-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Preserve Data Models from R8 optimization
+-keep class com.chandra.practice.deviceinfo.data.model.** { *; }
+-keepclassmembers class com.chandra.practice.deviceinfo.data.model.** { *; }
+
+# Keep AndroidX DataStore preferences
+-keep class androidx.datastore.preferences.protobuf.** { *; }

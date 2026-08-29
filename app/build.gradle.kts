@@ -19,9 +19,9 @@ android {
     defaultConfig {
         applicationId = "com.chandra.practice.deviceinfo"
         minSdk = 27
-        targetSdk = 35 // align with compileSdk
-        versionCode = 4
-        versionName = "1.1.0"
+        targetSdk = 36
+        versionCode = 5
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
