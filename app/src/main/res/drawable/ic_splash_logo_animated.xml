@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pop-in entrance animation for the splash icon. Only plays on API 31+ (the platform
+     SplashScreen actually animates icon drawables there); on older APIs the static frame
+     from ic_splash_logo.xml is shown instead, and MainActivity's onExitAnimationListener
+     provides the animated feel on every supported OS version. -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/ic_splash_logo">
+    <target android:name="icon_group">
+        <aapt:attr name="android:animation">
+            <set xmlns:android="http://schemas.android.com/apk/res/android">
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:duration="450"
+                    android:valueFrom="0.4"
+                    android:valueTo="1.0"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:duration="450"
+                    android:valueFrom="0.4"
+                    android:valueTo="1.0"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

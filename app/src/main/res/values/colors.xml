@@ -28,4 +28,8 @@
 
     <!-- Background -->
     <color name="colorBackground">#FEF7FF</color>
+
+    <!-- Splash screen brand background — intentionally the same in light and dark (not overridden
+         in values-night) so the launch screen reads consistently regardless of system theme. -->
+    <color name="splash_background">#6750A4</color>
 </resources>

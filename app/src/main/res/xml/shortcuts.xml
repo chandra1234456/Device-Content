@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="battery"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_battery"
+        android:shortcutShortLabel="@string/shortcut_battery_short"
+        android:shortcutLongLabel="@string/shortcut_battery_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.chandra.practice.deviceinfo"
+            android:targetClass="com.chandra.practice.deviceinfo.MainActivity">
+            <extra android:name="shortcut_category" android:value="BATTERY" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="storage"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_storage"
+        android:shortcutShortLabel="@string/shortcut_storage_short"
+        android:shortcutLongLabel="@string/shortcut_storage_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.chandra.practice.deviceinfo"
+            android:targetClass="com.chandra.practice.deviceinfo.MainActivity">
+            <extra android:name="shortcut_category" android:value="MEMORY_STORAGE" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="network"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_network"
+        android:shortcutShortLabel="@string/shortcut_network_short"
+        android:shortcutLongLabel="@string/shortcut_network_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.chandra.practice.deviceinfo"
+            android:targetClass="com.chandra.practice.deviceinfo.MainActivity">
+            <extra android:name="shortcut_category" android:value="NETWORK" />
+        </intent>
+    </shortcut>
+</shortcuts>
