@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.chandra.practice.deviceinfo.data.model.InfoCategory
@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        // Edge-to-edge with correct status/navigation bar icon contrast in light and dark themes.
+        enableEdgeToEdge()
 
         val appContainer = AppContainer(applicationContext)
         inAppUpdateManager = InAppUpdateManager(this)
@@ -79,6 +80,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = destination,
                         isUpdateReady = isUpdateReady,
                         onRestartToUpdate = inAppUpdateManager::completeUpdate,
+                        onCheckForUpdates = { callback -> inAppUpdateManager.checkForUpdate(userInitiated = true, onResult = callback) },
                         initialCategory = initialCategory,
                     )
                 }

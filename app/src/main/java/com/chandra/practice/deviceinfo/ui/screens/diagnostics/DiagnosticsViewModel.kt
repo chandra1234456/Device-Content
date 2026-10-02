@@ -1,6 +1,7 @@
 package com.chandra.practice.deviceinfo.ui.screens.diagnostics
 
 import android.hardware.Sensor
+import android.content.pm.PackageManager
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -55,13 +56,22 @@ class DiagnosticsViewModel(
 
     fun runAutomaticChecks() {
         runAutomaticSensorChecks()
-        // Speaker, Mic, Camera, Location, Wi-Fi, Bluetooth hardware checks
-        resultsRepository.setResult(DiagnosticTestId.SPEAKER, DiagnosticResult.PASS)
-        resultsRepository.setResult(DiagnosticTestId.MICROPHONE, DiagnosticResult.PASS)
-        resultsRepository.setResult(DiagnosticTestId.CAMERA, DiagnosticResult.PASS)
-        resultsRepository.setResult(DiagnosticTestId.GPS, DiagnosticResult.PASS)
-        resultsRepository.setResult(DiagnosticTestId.WIFI, DiagnosticResult.PASS)
-        resultsRepository.setResult(DiagnosticTestId.BLUETOOTH, DiagnosticResult.PASS)
+        // Hardware-presence checks only. They confirm the device has the component, not that it
+        // works; the dedicated test screens verify actual behaviour.
+        HARDWARE_FEATURES.forEach { (id, feature) ->
+            resultsRepository.setResult(
+                id,
+                if (deviceInfoRepository.hasSystemFeature(feature)) DiagnosticResult.PASS else DiagnosticResult.FAIL,
+            )
+        }
+    }
+
+    /** Wi-Fi and Bluetooth have no interactive screen, so tapping them runs this instant check. */
+    fun checkHardware(id: DiagnosticTestId): Boolean {
+        val feature = HARDWARE_FEATURES[id] ?: return false
+        val present = deviceInfoRepository.hasSystemFeature(feature)
+        resultsRepository.setResult(id, if (present) DiagnosticResult.PASS else DiagnosticResult.FAIL)
+        return present
     }
 
     class Factory(
@@ -73,3 +83,12 @@ class DiagnosticsViewModel(
             DiagnosticsViewModel(deviceInfoRepository, resultsRepository) as T
     }
 }
+
+private val HARDWARE_FEATURES = mapOf(
+    DiagnosticTestId.SPEAKER to PackageManager.FEATURE_AUDIO_OUTPUT,
+    DiagnosticTestId.MICROPHONE to PackageManager.FEATURE_MICROPHONE,
+    DiagnosticTestId.CAMERA to PackageManager.FEATURE_CAMERA_ANY,
+    DiagnosticTestId.GPS to PackageManager.FEATURE_LOCATION_GPS,
+    DiagnosticTestId.WIFI to PackageManager.FEATURE_WIFI,
+    DiagnosticTestId.BLUETOOTH to PackageManager.FEATURE_BLUETOOTH,
+)

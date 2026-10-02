@@ -4,6 +4,44 @@ All notable changes to Device Content are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions correspond to the
 `versionName` in `app/build.gradle.kts`.
 
+## [1.2.1]
+
+### Added
+- **Home redesign**: device hero card (name, Android version, API level) and richer tool cards
+  with icon badges, descriptions and Material You tonal colors, under a new "Tools" heading.
+- **System Info redesign**: category header with item count, rows grouped into one rounded
+  card, tap any row to copy (with confirmation), and a **Share** action to send a category as text.
+- **Check for updates** in Settings → Support, with clear feedback messages.
+- **Adaptive layouts** for tablets, foldables and landscape: content capped at a readable width
+  and a 3-column tool grid on wide screens.
+- Animated slide/fade transitions between screens.
+- Developer docs: rewritten README and new `docs/APP_DOCUMENTATION.md` (data shown, permissions,
+  architecture, release checklist).
+
+### Changed
+- **In-app updates** reworked: a dismissed prompt is no longer shown again on every resume,
+  critical releases (Play priority 4+) use the immediate full-screen flow, and interrupted
+  immediate updates resume on launch.
+- "Download PDF" button now appears only on the System tab.
+- Edge-to-edge now uses `enableEdgeToEdge()`, fixing status-bar icon contrast in dark theme.
+- The activity no longer restarts on rotation, fold/unfold, font-size or theme changes.
+- Manifest `uses-feature` for Wi-Fi, location, touchscreen, autofocus and flash set to
+  optional, so the app is installable on more device types (tablets, Chromebooks, TVs).
+
+### Fixed
+- **Storage Analyzer** category breakdown showing 0 for Photos, Videos and Audio: the app now
+  requests media-read permission (with an "Allow access" prompt) and reloads after it is granted.
+  Downloads may still read low on Android 11+ because of scoped storage.
+- **Back button**: Back on the System tab returns to the Home tab instead of exiting; the
+  selected tab is remembered; Back in the online Privacy Policy/Terms view steps through web
+  history; rapid double-taps on a back arrow no longer pop past Home to a blank screen.
+- WebView is now released when its screen closes.
+
+### Permissions
+- Added `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO` (Android 13+) and
+  `READ_EXTERNAL_STORAGE` (up to Android 12), used only to total file sizes. Update the Play
+  Console permissions declaration and Data safety form accordingly.
+
 ## [Unreleased] — targeting 1.1.0
 
 ### Added

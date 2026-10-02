@@ -17,12 +17,12 @@ class DeviceInfoApplication : Application(), ComponentCallbacks2 {
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         when (level) {
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL,
-            ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
-            ComponentCallbacks2.TRIM_MEMORY_MODERATE,
-            ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+            TRIM_MEMORY_RUNNING_MODERATE,
+            TRIM_MEMORY_RUNNING_LOW,
+            TRIM_MEMORY_RUNNING_CRITICAL,
+            TRIM_MEMORY_BACKGROUND,
+            TRIM_MEMORY_MODERATE,
+            TRIM_MEMORY_COMPLETE -> {
                 // Hint system garbage collector to free unreferenced memory buffers
                 System.gc()
             }

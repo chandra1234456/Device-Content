@@ -21,6 +21,11 @@ data class BatteryTestState(
     val samples: List<BatterySample> = emptyList(),
     val ratePercentPerMinute: Float? = null,
     val estimatedMinutesToFull: Int? = null,
+    val estimatedMinutesToEmpty: Int? = null,
+    /** Elapsed test time, updated on each poll. */
+    val elapsedMs: Long = 0L,
+    /** True when a finished test was too short or saw no whole-percent change to give a real rate. */
+    val notEnoughData: Boolean = false,
 )
 
 @Immutable
@@ -59,6 +64,8 @@ class BatteryViewModel(private val repository: DeviceInfoRepository) : ViewModel
     fun stopObserving() {
         pollingJob?.cancel()
         pollingJob = null
+        // Samples only arrive while polling, so a test can't keep running once the screen is gone.
+        if (_uiState.value.test.isRunning) stopTest()
     }
 
     fun startTest() {
@@ -73,13 +80,14 @@ class BatteryViewModel(private val repository: DeviceInfoRepository) : ViewModel
     fun stopTest() {
         _uiState.update { state ->
             val rate = chargeRatePerMinute(state.test.samples)
-            val remainingPercent = 100 - (state.details?.percent ?: 0)
-            val minutesToFull = rate?.takeIf { it > 0f }?.let { (remainingPercent / it).toInt() }
+            val percent = state.details?.percent ?: 0
             state.copy(
                 test = state.test.copy(
                     isRunning = false,
                     ratePercentPerMinute = rate,
-                    estimatedMinutesToFull = minutesToFull,
+                    estimatedMinutesToFull = rate?.takeIf { it > 0f }?.let { ((100 - percent) / it).toInt() },
+                    estimatedMinutesToEmpty = rate?.takeIf { it < 0f }?.let { (percent / -it).toInt() },
+                    notEnoughData = rate == null,
                 ),
             )
         }
@@ -87,20 +95,27 @@ class BatteryViewModel(private val repository: DeviceInfoRepository) : ViewModel
 
     private fun recordSample(percent: Int) {
         val elapsed = System.currentTimeMillis() - testStartMs
-        _uiState.update { state -> state.copy(test = state.test.copy(samples = state.test.samples + BatterySample(elapsed, percent))) }
+        _uiState.update { state -> state.copy(test = state.test.copy(samples = state.test.samples + BatterySample(elapsed, percent), elapsedMs = elapsed)) }
     }
 
     private fun chargeRatePerMinute(samples: List<BatterySample>): Float? {
         if (samples.size < 2) return null
         val first = samples.first()
         val last = samples.last()
+        // Battery level only moves in whole percents, so a short run or a flat level would report a
+        // misleading 0%/min. Require some time and at least one percent of change.
+        if (last.elapsedMs - first.elapsedMs < MIN_TEST_DURATION_MS || last.percent == first.percent) return null
         val minutes = (last.elapsedMs - first.elapsedMs) / 60_000f
-        return if (minutes <= 0f) null else (last.percent - first.percent) / minutes
+        return (last.percent - first.percent) / minutes
     }
 
     override fun onCleared() {
         stopObserving()
         super.onCleared()
+    }
+
+    private companion object {
+        const val MIN_TEST_DURATION_MS = 60_000L
     }
 
     class Factory(private val repository: DeviceInfoRepository) : ViewModelProvider.Factory {

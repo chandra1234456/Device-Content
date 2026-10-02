@@ -1,5 +1,6 @@
 package com.chandra.practice.deviceinfo.ui.screens.diagnostics
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,6 +49,7 @@ fun DiagnosticsScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         modifier = modifier,
@@ -96,7 +98,21 @@ fun DiagnosticsScreen(
             }
 
             items(state.tests, key = { it.id }) { test ->
-                DiagnosticTestCard(test = test, onClick = { onOpenTest(test.id) })
+                DiagnosticTestCard(
+                    test = test,
+                    onClick = {
+                        if (test.id == DiagnosticTestId.WIFI || test.id == DiagnosticTestId.BLUETOOTH) {
+                            val present = viewModel.checkHardware(test.id)
+                            Toast.makeText(
+                                context,
+                                if (present) "${test.id.title} hardware detected" else "${test.id.title} not available on this device",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        } else {
+                            onOpenTest(test.id)
+                        }
+                    },
+                )
             }
         }
     }

@@ -51,6 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chandra.practice.deviceinfo.R
 import com.chandra.practice.deviceinfo.data.repository.ThemeMode
+import com.chandra.practice.deviceinfo.update.UpdateCheckResult
+import androidx.compose.material.icons.filled.SystemUpdate
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +61,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onOpenTerms: () -> Unit,
+    onCheckForUpdates: ((UpdateCheckResult) -> Unit) -> Unit = {},
     viewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -135,6 +139,22 @@ fun SettingsScreen(
             }
 
             SectionCard(title = "Support") {
+                SettingsRow(
+                    icon = Icons.Filled.SystemUpdate,
+                    label = "Check for updates",
+                    onClick = {
+                        Toast.makeText(context, "Checking for updates…", Toast.LENGTH_SHORT).show()
+                        onCheckForUpdates { result ->
+                            val message = when (result) {
+                                UpdateCheckResult.UP_TO_DATE -> "You're on the latest version"
+                                UpdateCheckResult.UPDATE_STARTED -> "Update available. Follow the prompt to install"
+                                UpdateCheckResult.READY_TO_INSTALL -> "Update downloaded. Restart from the Home screen to install"
+                                UpdateCheckResult.UNAVAILABLE -> "Updates are only available for Play Store installs"
+                            }
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        }
+                    },
+                )
                 SettingsRow(icon = Icons.Filled.RateReview, label = "Rate this app", onClick = { openPlayStore(context) })
                 SettingsRow(icon = Icons.Filled.Share, label = "Share this app", onClick = { shareApp(context) })
                 SettingsRow(icon = Icons.Filled.Info, label = "Send feedback", onClick = { sendFeedbackEmail(context) })

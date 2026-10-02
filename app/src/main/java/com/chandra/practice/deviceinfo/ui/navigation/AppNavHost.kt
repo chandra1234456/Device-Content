@@ -4,6 +4,19 @@ package com.chandra.practice.deviceinfo.ui.navigation
 
 import android.app.Activity
 import android.net.Uri
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,6 +54,7 @@ import com.chandra.practice.deviceinfo.ui.screens.monitor.MonitorViewModel
 import com.chandra.practice.deviceinfo.ui.screens.settings.SettingsScreen
 import com.chandra.practice.deviceinfo.ui.screens.settings.SettingsViewModel
 import com.chandra.practice.deviceinfo.ui.screens.webview.WebViewScreen
+import com.chandra.practice.deviceinfo.update.UpdateCheckResult
 import kotlinx.coroutines.launch
 
 private const val PRIVACY_POLICY_URL = "https://sites.google.com/view/device-content/home"
@@ -51,6 +67,7 @@ fun AppNavHost(
     startDestination: String,
     isUpdateReady: Boolean = false,
     onRestartToUpdate: () -> Unit = {},
+    onCheckForUpdates: ((UpdateCheckResult) -> Unit) -> Unit = {},
     initialCategory: InfoCategory = InfoCategory.OVERVIEW,
     modifier: Modifier = Modifier,
 ) {
@@ -58,7 +75,26 @@ fun AppNavHost(
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as? Activity
 
-    NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
+    // On tablets, foldables and landscape, keep content at a readable width instead of stretching
+    // edge to edge. Hardware tests that need the whole screen opt out.
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    val isFullScreenRoute = currentRoute == Routes.DISPLAY_TEST || currentRoute == Routes.TOUCH_TEST
+    val widthModifier = if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact || isFullScreenRoute) {
+        Modifier.fillMaxSize()
+    } else {
+        Modifier.fillMaxHeight().widthIn(max = 840.dp)
+    }
+
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = widthModifier,
+        enterTransition = { slideInHorizontally(tween(300)) { it / 6 } + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(tween(300)) { -it / 6 } + fadeOut(tween(200)) },
+        popEnterTransition = { slideInHorizontally(tween(300)) { -it / 6 } + fadeIn(tween(300)) },
+        popExitTransition = { slideOutHorizontally(tween(300)) { it / 6 } + fadeOut(tween(200)) },
+    ) {
         composable(Routes.INTRO) {
             IntroScreen(
                 onAgree = {
@@ -97,39 +133,40 @@ fun AppNavHost(
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onOpenPrivacyPolicy = { navController.navigate(Routes.PRIVACY_POLICY) },
+                onCheckForUpdates = onCheckForUpdates,
                 onOpenTerms = { navController.navigate(Routes.TERMS) },
                 viewModel = viewModel(factory = SettingsViewModel.Factory(appContainer.userPreferencesRepository)),
             )
         }
         composable(Routes.PRIVACY_POLICY) {
             PrivacyPolicyScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onViewOnline = { navController.navigate(Routes.webView(PRIVACY_POLICY_URL, "Privacy Policy")) },
             )
         }
         composable(Routes.TERMS) {
             TermsScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onViewOnline = { navController.navigate(Routes.webView(TERMS_URL, "Terms & Services")) },
             )
         }
         composable(Routes.BATTERY) {
             BatteryScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 viewModel = viewModel(factory = BatteryViewModel.Factory(appContainer.deviceInfoRepository)),
             )
         }
         composable(Routes.MONITOR) {
             MonitorScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 viewModel = viewModel(factory = MonitorViewModel.Factory(appContainer.deviceInfoRepository)),
             )
         }
         composable(Routes.DIAGNOSTICS) {
             DiagnosticsScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onOpenTest = { testId ->
                     val route = when (testId) {
                         DiagnosticTestId.TOUCH -> Routes.TOUCH_TEST
@@ -155,49 +192,49 @@ fun AppNavHost(
         }
         composable(Routes.TOUCH_TEST) {
             TouchTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.TOUCH, result) },
             )
         }
         composable(Routes.VIBRATION_TEST) {
             VibrationTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.VIBRATION, result) },
             )
         }
         composable(Routes.FLASH_TEST) {
             FlashTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.FLASH, result) },
             )
         }
         composable(Routes.DISPLAY_TEST) {
             DisplayTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.DISPLAY, result) },
             )
         }
         composable(Routes.SPEAKER_TEST) {
             com.chandra.practice.deviceinfo.ui.screens.diagnostics.SpeakerTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.SPEAKER, result) },
             )
         }
         composable(Routes.MIC_TEST) {
             com.chandra.practice.deviceinfo.ui.screens.diagnostics.MicrophoneTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.MICROPHONE, result) },
             )
         }
         composable(Routes.CAMERA_TEST) {
             com.chandra.practice.deviceinfo.ui.screens.diagnostics.CameraTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.CAMERA, result) },
             )
         }
         composable(Routes.LOCATION_TEST) {
             com.chandra.practice.deviceinfo.ui.screens.diagnostics.LocationTestScreen(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(DiagnosticTestId.GPS, result) },
             )
         }
@@ -212,7 +249,7 @@ fun AppNavHost(
             com.chandra.practice.deviceinfo.ui.screens.diagnostics.PhoneCheckupScreen(
                 tests = diagState.tests,
                 onRunAutoChecks = { diagViewModel.runAutomaticChecks() },
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
             )
         }
         composable(Routes.NETWORK_ANALYZER) {
@@ -226,7 +263,7 @@ fun AppNavHost(
             )
             com.chandra.practice.deviceinfo.ui.screens.network.NetworkAnalyzerScreen(
                 viewModel = netVm,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
             )
         }
         composable(Routes.SENSOR_EXPLORER) {
@@ -240,7 +277,7 @@ fun AppNavHost(
             )
             com.chandra.practice.deviceinfo.ui.screens.sensors.SensorExplorerScreen(
                 viewModel = sensorVm,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
             )
         }
         composable(Routes.BENCHMARK) {
@@ -254,7 +291,7 @@ fun AppNavHost(
             )
             com.chandra.practice.deviceinfo.ui.screens.benchmark.BenchmarkScreen(
                 viewModel = benchVm,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
             )
         }
         composable(Routes.STORAGE_ANALYZER) {
@@ -268,7 +305,7 @@ fun AppNavHost(
             )
             com.chandra.practice.deviceinfo.ui.screens.storage.StorageAnalyzerScreen(
                 viewModel = storageVm,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
             )
         }
         composable(
@@ -280,7 +317,7 @@ fun AppNavHost(
                 ?: DiagnosticTestId.ACCELEROMETER
             SensorTestScreen(
                 testId = testId,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.safePop() },
                 onResult = { result -> appContainer.diagnosticsResultsRepository.setResult(testId, result) },
             )
         }
@@ -293,7 +330,16 @@ fun AppNavHost(
         ) { backStackEntry ->
             val url = Uri.decode(backStackEntry.arguments?.getString("url").orEmpty())
             val title = Uri.decode(backStackEntry.arguments?.getString("title").orEmpty())
-            WebViewScreen(url = url, title = title, onBack = { navController.popBackStack() })
+            WebViewScreen(url = url, title = title, onBack = { navController.safePop() })
         }
     }
+    }
+}
+
+/**
+ * Pops only when the current screen is fully resumed. A fast double-tap on a back arrow (or Back
+ * during a transition) would otherwise pop twice and leave the user on a blank NavHost.
+ */
+private fun NavController.safePop() {
+    if (currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) popBackStack()
 }

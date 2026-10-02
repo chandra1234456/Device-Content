@@ -3,11 +3,21 @@
 package com.chandra.practice.deviceinfo.ui.screens.home
 
 import android.Manifest
+import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +30,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.chandra.practice.deviceinfo.ui.components.CategoryHeader
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.CameraAlt
@@ -58,6 +70,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -117,7 +131,10 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val useRail = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
     var showExportDialog by remember { mutableStateOf(false) }
-    var selectedTab by remember { mutableStateOf(MainTab.HOME) }
+    var selectedTab by rememberSaveable { mutableStateOf(MainTab.HOME) }
+
+    // Back from the System tab returns to the Home tab first; only Back on Home leaves the app.
+    BackHandler(enabled = selectedTab != MainTab.HOME) { selectedTab = MainTab.HOME }
 
     var cameraPermissionGranted by remember { mutableStateOf(hasCameraPermission(context)) }
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -162,6 +179,24 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(if (selectedTab == MainTab.HOME) "Device Content" else "System Info") },
                 actions = {
+                    if (selectedTab == MainTab.SYSTEM) {
+                        IconButton(onClick = {
+                            val (title, items) = viewModel.currentExportData()
+                            if (items.isEmpty()) {
+                                Toast.makeText(context, "Nothing to share yet", Toast.LENGTH_SHORT).show()
+                            } else {
+                                val body = items.joinToString("\n", prefix = "$title\n\n") { "${it.label}: ${it.value}" }
+                                val send = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, "$appName - $title")
+                                    putExtra(Intent.EXTRA_TEXT, body)
+                                }
+                                context.startActivity(Intent.createChooser(send, "Share $title"))
+                            }
+                        }) {
+                            Icon(Icons.Filled.Share, contentDescription = "Share ${state.selectedCategory.title}")
+                        }
+                    }
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
@@ -181,11 +216,13 @@ fun HomeScreen(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text("Download PDF") },
-                icon = { Icon(Icons.Filled.PictureAsPdf, contentDescription = null) },
-                onClick = { showExportDialog = true },
-            )
+            if (selectedTab == MainTab.SYSTEM) {
+                ExtendedFloatingActionButton(
+                    text = { Text("Download PDF") },
+                    icon = { Icon(Icons.Filled.PictureAsPdf, contentDescription = null) },
+                    onClick = { showExportDialog = true },
+                )
+            }
         },
     ) { padding ->
         when (selectedTab) {
@@ -203,6 +240,10 @@ fun HomeScreen(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             )
                         }
+                    }
+
+                    item {
+                        DeviceHeroCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                     }
 
                     state.healthScore?.let { healthScore ->
@@ -223,6 +264,7 @@ fun HomeScreen(
                             onOpenSensorExplorer = onOpenSensorExplorer,
                             onOpenBenchmark = onOpenBenchmark,
                             onOpenStorageAnalyzer = onOpenStorageAnalyzer,
+                            columns = if (useRail) 3 else 2,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         )
                     }
@@ -299,13 +341,23 @@ fun HomeScreen(
                                             )
                                         }
                                     } else {
-                                        items(filteredItems, key = { it.key }) { item ->
+                                        item {
+                                            CategoryHeader(
+                                                category = state.selectedCategory,
+                                                itemCount = filteredItems.size,
+                                                modifier = Modifier.padding(start = 20.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                                            )
+                                        }
+                                        itemsIndexed(filteredItems, key = { _, it -> it.key }) { index, item ->
                                             InfoRowCard(
                                                 item = item,
                                                 onCopy = {
                                                     clipboardManager.setText(AnnotatedString("${item.label}: ${item.value}"))
+                                                    Toast.makeText(context, "${item.label} copied", Toast.LENGTH_SHORT).show()
                                                 },
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                                isFirst = index == 0,
+                                                isLast = index == filteredItems.lastIndex,
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.dp),
                                             )
                                         }
                                     }
@@ -392,59 +444,100 @@ private fun QuickActionsGrid(
     onOpenSensorExplorer: () -> Unit,
     onOpenBenchmark: () -> Unit,
     onOpenStorageAnalyzer: () -> Unit,
+    columns: Int,
     modifier: Modifier = Modifier,
 ) {
+    val scheme = MaterialTheme.colorScheme
     val actions = listOf(
-        Triple(Icons.Filled.BatteryFull, "Battery", onOpenBattery),
-        Triple(Icons.Filled.Science, "Diagnose", onOpenDiagnostics),
-        Triple(Icons.Filled.Monitor, "Monitor", onOpenMonitor),
-        Triple(Icons.Filled.Wifi, "Network", onOpenNetworkAnalyzer),
-        Triple(Icons.Filled.Sensors, "Sensors", onOpenSensorExplorer),
-        Triple(Icons.Filled.Speed, "Benchmark", onOpenBenchmark),
-        Triple(Icons.Filled.Storage, "Storage", onOpenStorageAnalyzer),
+        QuickAction(Icons.Filled.BatteryFull, "Battery", "Health & charging", scheme.primaryContainer, scheme.onPrimaryContainer, onOpenBattery),
+        QuickAction(Icons.Filled.Science, "Diagnose", "Test your hardware", scheme.tertiaryContainer, scheme.onTertiaryContainer, onOpenDiagnostics),
+        QuickAction(Icons.Filled.Monitor, "Monitor", "Live CPU & memory", scheme.secondaryContainer, scheme.onSecondaryContainer, onOpenMonitor),
+        QuickAction(Icons.Filled.Wifi, "Network", "Speed & connection", scheme.primaryContainer, scheme.onPrimaryContainer, onOpenNetworkAnalyzer),
+        QuickAction(Icons.Filled.Sensors, "Sensors", "Live sensor data", scheme.tertiaryContainer, scheme.onTertiaryContainer, onOpenSensorExplorer),
+        QuickAction(Icons.Filled.Speed, "Benchmark", "Rate performance", scheme.secondaryContainer, scheme.onSecondaryContainer, onOpenBenchmark),
+        QuickAction(Icons.Filled.Storage, "Storage", "What's using space", scheme.primaryContainer, scheme.onPrimaryContainer, onOpenStorageAnalyzer),
     )
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        actions.chunked(2).forEach { rowActions ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                rowActions.forEach { (icon, label, onClick) ->
-                    QuickActionCard(icon = icon, label = label, onClick = onClick, modifier = Modifier.weight(1f))
-                }
-                if (rowActions.size == 1) {
-                    Spacer(Modifier.weight(1f))
-                }
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            text = "Tools",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(start = 4.dp, bottom = 2.dp),
+        )
+        actions.chunked(columns).forEach { rowActions ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                rowActions.forEach { action -> QuickActionCard(action, Modifier.weight(1f)) }
+                repeat(columns - rowActions.size) { Spacer(Modifier.weight(1f)) }
             }
         }
     }
 }
 
+private data class QuickAction(
+    val icon: ImageVector,
+    val title: String,
+    val subtitle: String,
+    val container: Color,
+    val content: Color,
+    val onClick: () -> Unit,
+)
+
 @Composable
-private fun QuickActionCard(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun QuickActionCard(action: QuickAction, modifier: Modifier = Modifier) {
     Card(
-        onClick = onClick,
+        onClick = action.onClick,
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = action.container),
+        shape = MaterialTheme.shapes.large,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
-            Spacer(Modifier.width(8.dp))
-            Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSecondaryContainer)
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Box(
+                modifier = Modifier.size(40.dp).background(action.content.copy(alpha = 0.12f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(action.icon, contentDescription = null, tint = action.content)
+            }
+            Spacer(Modifier.height(12.dp))
+            Text(action.title, style = MaterialTheme.typography.titleSmall, color = action.content)
+            Text(
+                action.subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = action.content.copy(alpha = 0.8f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeviceHeroCard(modifier: Modifier = Modifier) {
+    val name = remember {
+        val maker = Build.MANUFACTURER.replaceFirstChar { it.uppercase() }
+        if (Build.MODEL.startsWith(maker, ignoreCase = true)) Build.MODEL else "$maker ${Build.MODEL}"
+    }
+    val onPrimary = MaterialTheme.colorScheme.onPrimary
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
+        Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier.size(56.dp).background(onPrimary.copy(alpha = 0.16f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Filled.PhoneAndroid, contentDescription = null, tint = onPrimary, modifier = Modifier.size(30.dp))
+            }
+            Spacer(Modifier.width(16.dp))
+            Column {
+                Text(name, style = MaterialTheme.typography.titleLarge, color = onPrimary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(
+                    "Android ${Build.VERSION.RELEASE} · API ${Build.VERSION.SDK_INT}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = onPrimary.copy(alpha = 0.85f),
+                )
+            }
         }
     }
 }

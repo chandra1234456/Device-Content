@@ -1,6 +1,22 @@
 package com.chandra.practice.deviceinfo.ui.screens.storage
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.chandra.practice.deviceinfo.ui.permissions.hasMediaReadPermission
+import com.chandra.practice.deviceinfo.ui.permissions.mediaReadPermissions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +55,30 @@ fun StorageAnalyzerScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var hasMediaAccess by remember { mutableStateOf(hasMediaReadPermission(context)) }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) {
+        hasMediaAccess = hasMediaReadPermission(context)
+        viewModel.loadStorageData()
+    }
+
+    // The user may grant access from system Settings while this screen is backgrounded.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val granted = hasMediaReadPermission(context)
+                if (granted != hasMediaAccess) {
+                    hasMediaAccess = granted
+                    viewModel.loadStorageData()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     fun formatBytes(bytes: Long): String {
         val gb = bytes / (1024.0 * 1024.0 * 1024.0)
@@ -95,8 +135,44 @@ fun StorageAnalyzerScreen(
                 }
             }
 
+            if (!hasMediaAccess) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                "Allow access to see your breakdown",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Photos, videos and audio sizes can't be read without media access. " +
+                                    "Only file sizes are totalled; nothing is opened, uploaded or shared.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Button(onClick = { permissionLauncher.launch(mediaReadPermissions()) }) {
+                                Text("Allow access")
+                            }
+                        }
+                    }
+                }
+            }
+
             item {
                 Text("Category Breakdown", style = MaterialTheme.typography.titleMedium)
+            }
+
+            if (uiState.isLoading && uiState.categories.isEmpty()) {
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
 
             items(uiState.categories) { cat ->

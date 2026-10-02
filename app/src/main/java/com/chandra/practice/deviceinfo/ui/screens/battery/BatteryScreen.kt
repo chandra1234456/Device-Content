@@ -224,7 +224,14 @@ private fun BatteryTestCard(
                 Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
                 test.estimatedMinutesToFull?.let { minutes ->
                     Text(
-                        text = "Estimated time to full: $minutes min",
+                        text = "Estimated time to full: ${formatMinutes(minutes)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                test.estimatedMinutesToEmpty?.let { minutes ->
+                    Text(
+                        text = "Estimated time until empty: ${formatMinutes(minutes)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -232,9 +239,20 @@ private fun BatteryTestCard(
                 Spacer(Modifier.height(12.dp))
             }
 
+            if (!test.isRunning && test.notEnoughData) {
+                Text(
+                    text = "Not enough change to measure a rate. Run the test for a few minutes, " +
+                        "and make sure the charger stays plugged in (or unplugged) the whole time.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+
             if (test.isRunning) {
                 Text(
-                    text = "Testing… ${test.samples.size} samples collected",
+                    text = "Testing… ${formatElapsed(test.elapsedMs)} · ${test.samples.size} samples. " +
+                        "Needs at least a minute and a 1% change.",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -247,3 +265,11 @@ private fun BatteryTestCard(
     }
 }
 
+
+private fun formatElapsed(ms: Long): String {
+    val totalSeconds = ms / 1000
+    return String.format(Locale.getDefault(), "%d:%02d", totalSeconds / 60, totalSeconds % 60)
+}
+
+private fun formatMinutes(minutes: Int): String =
+    if (minutes >= 60) "${minutes / 60} h ${minutes % 60} min" else "$minutes min"

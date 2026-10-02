@@ -437,6 +437,9 @@ class DeviceInfoRepository(private val context: Context) {
         return sensorManager.getDefaultSensor(sensorType) != null
     }
 
+    /** Whether the device declares a hardware feature, e.g. [android.content.pm.PackageManager.FEATURE_WIFI]. */
+    fun hasSystemFeature(feature: String): Boolean = context.packageManager.hasSystemFeature(feature)
+
     // ---- Camera ----
 
     private fun cameraInfo(): List<DeviceInfoItem> {
