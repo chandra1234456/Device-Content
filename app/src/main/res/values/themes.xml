@@ -10,9 +10,10 @@
     <!-- Base application theme. All real Material 3 theming (colors, typography, shapes) lives in
          ui/theme/Theme.kt; this only needs to exist so the window itself (status/nav bar, splash
          hand-off) isn't left on the platform default theme before Compose takes over. -->
+    <!-- System bar colours are deliberately not set here: enableEdgeToEdge() in MainActivity makes
+         the bars transparent and picks icon contrast. The android:statusBarColor/navigationBarColor
+         theme items are deprecated from Android 15. -->
     <style name="Theme.DeviceInfo" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 </resources>

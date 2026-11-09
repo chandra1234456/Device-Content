@@ -1,11 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.chandra.practice.deviceinfo"
-    compileSdk = 36
+    compileSdk = 37
 
     signingConfigs {
         create("release") {
@@ -20,8 +20,8 @@ android {
         applicationId = "com.chandra.practice.deviceinfo"
         minSdk = 27
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.2.1"
+        versionCode = 8
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,15 +30,15 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             isDebuggable = false
+            // Bundles native debug symbols so Play Console can symbolicate native crashes and ANRs.
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
             proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
@@ -50,13 +50,10 @@ android {
         }
     }
 
+    // With AGP 9 built-in Kotlin, the Kotlin jvmTarget follows these compileOptions.
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {

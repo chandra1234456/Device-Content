@@ -79,7 +79,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -533,7 +533,7 @@ private fun DeviceHeroCard(modifier: Modifier = Modifier) {
             Column {
                 Text(name, style = MaterialTheme.typography.titleLarge, color = onPrimary, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 Text(
-                    "Android ${Build.VERSION.RELEASE} · API ${Build.VERSION.SDK_INT}",
+                    "Android ${androidVersionLabel()} · API ${Build.VERSION.SDK_INT}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = onPrimary.copy(alpha = 0.85f),
                 )
@@ -579,3 +579,8 @@ private fun CategoryNavigationRail(selected: InfoCategory, onSelect: (InfoCatego
         }
     }
 }
+
+/** Marketing version, or the preview codename on pre-release builds (RELEASE alone can be a codename or a bare number there). */
+private fun androidVersionLabel(): String =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY
+    else Build.VERSION.RELEASE

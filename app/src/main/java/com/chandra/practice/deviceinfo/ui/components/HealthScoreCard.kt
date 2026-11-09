@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -84,14 +88,29 @@ fun HealthScoreCard(healthScore: HealthScore, modifier: Modifier = Modifier) {
             }
             if (healthScore.recommendations.isNotEmpty()) {
                 Spacer(Modifier.height(14.dp))
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    healthScore.recommendations.forEach { recommendation ->
-                        Text(
-                            text = "• $recommendation",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 2.dp),
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                ) {
+                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.Top) {
+                        Icon(
+                            Icons.Filled.Lightbulb,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier.size(20.dp),
                         )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            healthScore.recommendations.forEach { recommendation ->
+                                Text(
+                                    text = recommendation,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    modifier = Modifier.padding(vertical = 2.dp),
+                                )
+                            }
+                        }
                     }
                 }
             }

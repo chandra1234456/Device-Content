@@ -7,5 +7,4 @@
 -->
 <full-backup-content>
     <include domain="root" path="files/datastore" />
-    <exclude domain="cache" path="." />
 </full-backup-content>

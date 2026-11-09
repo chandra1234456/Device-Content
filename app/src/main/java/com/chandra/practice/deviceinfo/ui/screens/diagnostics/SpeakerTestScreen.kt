@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -127,7 +127,7 @@ fun SpeakerTestScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Icon(
-                Icons.Filled.VolumeUp,
+                Icons.AutoMirrored.Filled.VolumeUp,
                 contentDescription = null,
                 modifier = Modifier.height(64.dp).width(64.dp),
                 tint = MaterialTheme.colorScheme.primary,

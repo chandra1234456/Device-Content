@@ -12,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.chandra.practice.deviceinfo.ui.permissions.hasMediaReadPermission
@@ -35,6 +35,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -129,7 +131,11 @@ fun StorageAnalyzerScreen(
                             progress = {
                                 if (uiState.totalBytes > 0) (uiState.usedBytes.toFloat() / uiState.totalBytes) else 0f
                             },
-                            modifier = Modifier.fillMaxWidth().height(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(6.dp)),
+                            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f),
                         )
                     }
                 }

@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SwipeUp
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -27,7 +27,7 @@ enum class DiagnosticTestId(val title: String, val icon: ImageVector) {
     ACCELEROMETER("Accelerometer", Icons.Filled.Sensors),
     GYROSCOPE("Gyroscope", Icons.Filled.Sensors),
     COMPASS("Compass", Icons.Filled.Explore),
-    SPEAKER("Speaker", Icons.Filled.VolumeUp),
+    SPEAKER("Speaker", Icons.AutoMirrored.Filled.VolumeUp),
     MICROPHONE("Microphone", Icons.Filled.Mic),
     CAMERA("Camera", Icons.Filled.CameraAlt),
     GPS("GPS / Location", Icons.Filled.LocationOn),
